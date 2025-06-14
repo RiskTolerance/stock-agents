@@ -88,7 +88,6 @@ export type SimpleQuoteData = {
 export type DefaultKeyStatistics = {
 	enterpriseValue: number;
 	profitMargins: number;
-	pegRatio: number;
 	enterpriseToRevenue: number;
 	enterpriseToEbitda: number;
 	floatShares: number;

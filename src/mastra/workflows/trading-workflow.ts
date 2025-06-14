@@ -168,10 +168,10 @@ export const tradingWorkflow = createWorkflow({
     context: contextSchema,
   }),
 })
-  .then(fundamentalStep)
-  // .then(sentimentStep)
-  // .then(newsStep)
-  // .then(technicalStep)
+.then(fundamentalStep)
+// .then(technicalStep)
+// .then(newsStep)
+// .then(sentimentStep)
   // .then(bullishStep)
   // .then(bearishStep)
   // .then(riskStep)
