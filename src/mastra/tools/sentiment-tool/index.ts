@@ -4,7 +4,7 @@ import { z } from 'zod';
 // Boilerplate for sentiment tool
 export const sentimentTool = createTool({
   id: 'fetch-sentiment-data',
-  description: 'Fetch sentiment data for a given stock symbol',
+  description: 'interpret the sentiment of a given news article',
   inputSchema: z.object({ symbol: z.string() }),
   outputSchema: z.any(),
   execute: async ({ context }) => {
