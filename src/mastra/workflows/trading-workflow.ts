@@ -45,26 +45,6 @@ const fundamentalStep = createStep({
 	},
 });
 
-const sentimentStep = createStep({
-	id: 'sentiment-analysis',
-	description: 'Run sentiment analysis agent',
-	inputSchema: contextSchema,
-	outputSchema: contextSchema,
-	execute: async ({ inputData }) => {
-		const result = await sentimentAgent.stream([
-			{
-				role: 'user',
-				content: `Analyze the sentiment for stock symbol: ${inputData.symbol}`,
-			},
-		]);
-		let output = '';
-		for await (const chunk of result.textStream) {
-			output += chunk;
-		}
-		return { ...inputData, sentiment: output };
-	},
-});
-
 const newsStep = createStep({
 	id: 'news-analysis',
 	description: 'Run news analysis agent',
@@ -82,26 +62,6 @@ const newsStep = createStep({
 			output += chunk;
 		}
 		return { ...inputData, news: output };
-	},
-});
-
-const technicalStep = createStep({
-	id: 'technical-analysis',
-	description: 'Run technical analysis agent',
-	inputSchema: contextSchema,
-	outputSchema: contextSchema,
-	execute: async ({ inputData }) => {
-		const result = await technicalAgent.stream([
-			{
-				role: 'user',
-				content: `Analyze the technicals for stock symbol: ${inputData.symbol}`,
-			},
-		]);
-		let output = '';
-		for await (const chunk of result.textStream) {
-			output += chunk;
-		}
-		return { ...inputData, technical: output };
 	},
 });
 
@@ -145,26 +105,6 @@ const bearishStep = createStep({
 	},
 });
 
-const riskStep = createStep({
-	id: 'risk-management',
-	description: 'Run risk management agent',
-	inputSchema: contextSchema,
-	outputSchema: contextSchema,
-	execute: async ({ inputData }) => {
-		const result = await riskAgent.stream([
-			{
-				role: 'user',
-				content: `Analyze the risk for stock symbol: ${inputData.symbol}`,
-			},
-		]);
-		let output = '';
-		for await (const chunk of result.textStream) {
-			output += chunk;
-		}
-		return { ...inputData, risk: output };
-	},
-});
-
 const traderStep = createStep({
 	id: 'trader-decision',
 	description: 'Run trader/decision agent',
@@ -200,10 +140,8 @@ export const tradingWorkflow = createWorkflow({
 })
 	.then(newsStep)
 	.then(fundamentalStep)
-	// .then(technicalStep)
-	// .then(sentimentStep)
-	.parallel([bullishStep, bearishStep])
-	// .then(riskStep)
+	.then(bullishStep)
+	.then(bearishStep)
 	.then(traderStep);
 
 tradingWorkflow.commit();
