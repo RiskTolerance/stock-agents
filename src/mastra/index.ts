@@ -5,8 +5,6 @@ import { LibSQLStore } from '@mastra/libsql';
 import { tradingWorkflow } from './workflows/trading-workflow';
 import { fundamentalAgent } from './agents/fundamental-agent';
 import { decisionAgent } from './agents/decision-agent';
-// import { weatherWorkflow } from './workflows/weather-workflow';
-// import { weatherAgent } from './agents/weather-agent';
 
 export const mastra = new Mastra({
   workflows: { tradingWorkflow },

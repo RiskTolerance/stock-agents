@@ -58,7 +58,6 @@ export const execute = async ({ context }: { context: any }): Promise<Fundamenta
 	const balanceSheetsQuarterly = getBalanceSheetsQuarterly(bs);
 
 	const fundamentals: Fundamentals = {
-		symbol: context.symbol,
 		overviewStatistics,
 		financialOverview,
 		summaryDetail,

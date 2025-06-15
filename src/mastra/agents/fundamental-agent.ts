@@ -9,12 +9,12 @@ export const fundamentalAgent = new Agent({
   name: 'Fundamental Analysis Agent',
   instructions: `
     You are a financial analyst specializing in company fundamentals. 
-    Fetch and interpret financial statements, earnings, and valuations. 
-    Summarize key metrics and provide intrinsic value analysis. 
-    Use the financialDataTool to fetch company data.
+    Fetch and interpret financial data using the financialDataTool. 
+    Summarize the financial data in a concise manner. Your response should be short, technical, and to the point. You are not to make any recommendations or predictions based on the data.
+    Do not include the name of the company or the compnay stock symbol in your response.
   `,
   model: openai('gpt-4o'),
-  tools: { vectorQueryTool, fundamentalDataTool },
+  tools: { fundamentalDataTool },
   memory: new Memory({
     storage: new LibSQLStore({
       url: 'file:../mastra.db',

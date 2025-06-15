@@ -227,7 +227,6 @@ export type BalanceSheetYearly = {
 };
 
 export interface Fundamentals {
-	symbol: string;
 	overviewStatistics: OverviewStatistics;
 	financialOverview: FinancialDataSummary;
 	summaryDetail: SummaryDetailSnapshot;
