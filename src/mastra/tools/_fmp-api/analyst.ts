@@ -23,8 +23,7 @@ export const AnalystAPI = {
 		const query = buildQuery('financial-estimates', {
 			symbol,
 			period: 'annual',
-			page: options.page,
-			limit: options.limit,
+			...options,
 		});
 		const response = await fetch(query);
 		if (!response.ok) {

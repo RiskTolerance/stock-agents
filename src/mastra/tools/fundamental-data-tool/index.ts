@@ -1,7 +1,7 @@
-import stockScreener from './modules/financial-modeling/stock-screener';
-import { AnalystAPI } from './modules/financial-modeling/analyst';
+import stockScreener from '../_fmp-api/stock-screener';
+import { AnalystAPI } from '../_fmp-api/analyst';
 
-let myQuery = stockScreener({
+let screenerResults = stockScreener({
 	options: {
 		sector: 'Healthcare',
 		industry: 'Medical Devices',
@@ -9,7 +9,9 @@ let myQuery = stockScreener({
 	},
 });
 
-const myEstimates = await AnalystAPI.financialEstimates('AAPL', {
+const estimates = await AnalystAPI.financialEstimates('AAPL', {
 	page: 0,
 	limit: 2,
 });
+
+const ratings = await AnalystAPI.historicalRatings('AAPL', 2);
