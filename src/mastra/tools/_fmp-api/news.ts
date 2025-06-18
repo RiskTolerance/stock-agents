@@ -91,7 +91,7 @@ export const NewsAPI = {
 
 // NEWS TYPES ------------------------------------------------------------
 
-export interface StockNews {
+interface StockNews {
 	symbol: string;
 	publishedDate: Date;
 	publisher: string;
@@ -103,7 +103,7 @@ export interface StockNews {
 }
 export type StockNewsArr = StockNews[];
 
-export interface PressRelease {
+interface PressRelease {
 	symbol: string;
 	publishedDate: Date;
 	publisher: string;
@@ -115,7 +115,7 @@ export interface PressRelease {
 }
 export type PressReleaseArr = PressRelease[];
 
-export interface PriceTargetNews {
+interface PriceTargetNews {
 	symbol: string;
 	publishedDate: Date;
 	newsURL: string;
@@ -128,10 +128,9 @@ export interface PriceTargetNews {
 	newsBaseURL: string;
 	analystCompany: string;
 }
-
 export type PriceTargetNewsArr = PriceTargetNews[];
 
-export interface StockGradeNews {
+interface StockGradeNews {
 	symbol: string;
 	publishedDate: Date;
 	newsURL: string;

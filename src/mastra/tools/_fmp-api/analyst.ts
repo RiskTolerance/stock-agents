@@ -20,7 +20,7 @@ export const AnalystAPI = {
 		if (options.limit >= 10) {
 			throw new Error('Limit must be less than 10');
 		}
-		const query = buildQuery('financial-estimates', {
+		const query = buildQuery('analyst-estimates', {
 			symbol,
 			period: 'annual',
 			...options,
@@ -139,7 +139,7 @@ export const AnalystAPI = {
 };
 
 // Types and interfaces remain exported at the module level
-export interface FinancialEstimates {
+interface FinancialEstimates {
 	symbol: string;
 	date: Date;
 	revenueLow: number;
@@ -165,7 +165,7 @@ export interface FinancialEstimates {
 }
 export type FinancialEstimatesArr = FinancialEstimates[];
 
-export interface RatingsSnapshot {
+interface RatingsSnapshot {
 	symbol: string;
 	rating: string;
 	overallScore: number;
@@ -178,7 +178,7 @@ export interface RatingsSnapshot {
 }
 export type RatingsSnapshotArr = RatingsSnapshot[];
 
-export interface HistoricalRatings {
+interface HistoricalRatings {
 	symbol: string;
 	date: Date;
 	rating: string;
@@ -192,7 +192,7 @@ export interface HistoricalRatings {
 }
 export type HistoricalRatingsArr = HistoricalRatings[];
 
-export interface AnalystPriceTarget {
+interface AnalystPriceTarget {
 	symbol: string;
 	lastMonthCount: number;
 	lastMonthAvgPriceTarget: number;
@@ -206,7 +206,7 @@ export interface AnalystPriceTarget {
 }
 export type AnalystPriceTargetArr = AnalystPriceTarget[];
 
-export interface AnalystPriceTargetConsensus {
+interface AnalystPriceTargetConsensus {
 	symbol: string;
 	targetHigh: number;
 	targetLow: number;
@@ -215,7 +215,7 @@ export interface AnalystPriceTargetConsensus {
 }
 export type AnalystPriceTargetConsensusArr = AnalystPriceTargetConsensus[];
 
-export interface StockGradesConsensus {
+interface StockGradesConsensus {
 	symbol: string;
 	strongBuy: number;
 	buy: number;
@@ -226,7 +226,7 @@ export interface StockGradesConsensus {
 }
 export type StockGradesConsensusArr = StockGradesConsensus[];
 
-export interface StockGradeChanges {
+interface StockGradeChanges {
 	symbol: string;
 	date: Date;
 	gradingCompany: string;
@@ -236,7 +236,7 @@ export interface StockGradeChanges {
 }
 export type StockGradeChangesArr = StockGradeChanges[];
 
-export interface StockGradesHistory {
+interface StockGradesHistory {
 	symbol: string;
 	date: Date;
 	analystRatingsBuy: number;

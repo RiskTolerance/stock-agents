@@ -265,7 +265,7 @@ export const TechnicalAPI = {
 
 // TYPES -----------------------------------------------------------
 // Moving Average Base Type
-export interface MovingAverageBase {
+interface MovingAverageBase {
 	date: Date;
 	open: number;
 	high: number;
@@ -273,45 +273,28 @@ export interface MovingAverageBase {
 	close: number;
 }
 
-// Base Inputs (all technical indicators)
-
-// Simple Moving Average
-// https://financialmodelingprep.com/stable/technical-indicators/sma?symbol=AAPL&periodLength=10&timeframe=1day&apikey=pLziYh3bDTK9yioOpheiLREFHcpxbK1X
-
-export interface SimpleMovingAverage extends MovingAverageBase {
+interface SimpleMovingAverage extends MovingAverageBase {
 	sma: number;
 }
 export type SimpleMovingAverageArr = SimpleMovingAverage[];
 
-// Exponential Moving Average
-// https://financialmodelingprep.com/stable/technical-indicators/ema?symbol=AAPL&periodLength=10&timeframe=1day&apikey=pLziYh3bDTK9yioOpheiLREFHcpxbK1X
-
-export interface ExponentialMovingAverage extends MovingAverageBase {
+interface ExponentialMovingAverage extends MovingAverageBase {
 	ema: number;
 }
 export type ExponentialMovingAverageArr = ExponentialMovingAverage[];
 
-// Weighted Moving Average
-// https://financialmodelingprep.com/stable/technical-indicators/wma?symbol=AAPL&periodLength=10&timeframe=1day&apikey=pLziYh3bDTK9yioOpheiLREFHcpxbK1X
-
-export interface WeightedMovingAverage extends MovingAverageBase {
+interface WeightedMovingAverage extends MovingAverageBase {
 	wma: number;
 }
 export type WeightedMovingAverageArr = WeightedMovingAverage[];
 
-// Double Exponential Moving Average
-// https://financialmodelingprep.com/stable/technical-indicators/dema?symbol=AAPL&periodLength=10&timeframe=1day&apikey=pLziYh3bDTK9yioOpheiLREFHcpxbK1X
-
-export interface DoubleExponentialMovingAverage extends MovingAverageBase {
+interface DoubleExponentialMovingAverage extends MovingAverageBase {
 	dema: number;
 }
 export type DoubleExponentialMovingAverageArr =
 	DoubleExponentialMovingAverage[];
 
-// Triple Exponential Moving Average
-// https://financialmodelingprep.com/stable/technical-indicators/tema?symbol=AAPL&periodLength=10&timeframe=1day&apikey=pLziYh3bDTK9yioOpheiLREFHcpxbK1X
-
-export interface TripleExponentialMovingAverage extends MovingAverageBase {
+interface TripleExponentialMovingAverage extends MovingAverageBase {
 	tema: number;
 }
 export type TripleExponentialMovingAverageArr =
@@ -320,7 +303,7 @@ export type TripleExponentialMovingAverageArr =
 // Relative Strength Index
 // https://financialmodelingprep.com/stable/technical-indicators/rsi?symbol=AAPL&periodLength=10&timeframe=1day&apikey=pLziYh3bDTK9yioOpheiLREFHcpxbK1X
 
-export interface RelativeStrengthIndex extends MovingAverageBase {
+interface RelativeStrengthIndex extends MovingAverageBase {
 	rsi: number;
 }
 export type RelativeStrengthIndexArr = RelativeStrengthIndex[];
@@ -328,7 +311,7 @@ export type RelativeStrengthIndexArr = RelativeStrengthIndex[];
 // Standard Deviation
 // https://financialmodelingprep.com/stable/technical-indicators/standarddeviation?symbol=AAPL&periodLength=10&timeframe=1day&apikey=pLziYh3bDTK9yioOpheiLREFHcpxbK1X
 
-export interface StandardDeviation extends MovingAverageBase {
+interface StandardDeviation extends MovingAverageBase {
 	standardDeviation: number;
 }
 export type StandardDeviationArr = StandardDeviation[];
@@ -336,7 +319,7 @@ export type StandardDeviationArr = StandardDeviation[];
 // Williams %R
 // https://financialmodelingprep.com/stable/technical-indicators/williams?symbol=AAPL&periodLength=10&timeframe=1day&apikey=pLziYh3bDTK9yioOpheiLREFHcpxbK1X
 
-export interface WilliamsR extends MovingAverageBase {
+interface WilliamsR extends MovingAverageBase {
 	williams: number;
 }
 export type WilliamsRArr = WilliamsR[];
@@ -344,7 +327,7 @@ export type WilliamsRArr = WilliamsR[];
 // Average Directional Index
 // https://financialmodelingprep.com/stable/technical-indicators/adx?symbol=AAPL&periodLength=10&timeframe=1day&apikey=pLziYh3bDTK9yioOpheiLREFHcpxbK1X
 
-export interface AverageDirectionalIndex extends MovingAverageBase {
+interface AverageDirectionalIndex extends MovingAverageBase {
 	adx: number;
 }
 export type AverageDirectionalIndexArr = AverageDirectionalIndex[];

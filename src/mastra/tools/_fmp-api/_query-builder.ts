@@ -8,5 +8,8 @@ export const buildQuery = (endpoint: string, options: Record<string, any>) => {
 			}
 		}
 	})();
-	return `${baseUrl}?${queryParamString}&apikey=${process.env.FMP_API_KEY}`;
+	const KEY = process.env.FMP_API_KEY ?? 'pLziYh3bDTK9yioOpheiLREFHcpxbK1X';
+	const query = `${baseUrl}?${queryParamString}&apikey=${KEY}`;
+	console.log(query);
+	return query;
 };

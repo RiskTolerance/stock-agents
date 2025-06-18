@@ -37,7 +37,7 @@ export default stockScreener;
 
 // STOCK SCREENER TYPES ------------------------------------------------------------
 
-export interface ScreenerResult {
+interface ScreenerResult {
 	symbol: string;
 	companyName: string;
 	marketCap: number;
@@ -82,17 +82,17 @@ type ScreenerOptions<S extends MarketSector = MarketSector> = {
 	includeAllShareClasses?: boolean;
 };
 
-export type SectorIndustryMap = {
+type SectorIndustryMap = {
 	Healthcare:
 		| 'Biotechnology'
-		| 'Medical Devices'
+		| 'Medical - Devices'
 		| 'Drug Manufacturers - Specialty & Generic'
-		| 'Medical Instruments & Supplies'
+		| 'Medical - Instruments & Supplies'
 		| 'Diagnostics & Research'
-		| 'Medical Care Facilities'
+		| 'Medical - Care Facilities'
 		| 'Health Information Services'
 		| 'Drug Manufacturers - General'
-		| 'Medical Distribution'
+		| 'Medical - Distribution'
 		| 'Healthcare Plans'
 		| 'Pharmaceutical Retailers';
 	Financials:
