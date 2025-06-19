@@ -1,28 +1,29 @@
 import { buildQuery } from './_query-builder';
 
-// returns all stocks that match the screeners criteria
-// https://financialmodelingprep.com/stable/company-screener?marketCapMoreThan=1000000000&marketCapLessThan=10000000000&sector=Technology&industry=Software&betaMoreThan=1&betaLowerThan=2&priceMoreThan=100&priceLowerThan=200&dividendMoreThan=0.01&dividendLowerThan=0.02&volumeMoreThan=1000000&volumeLowerThan=2000000&exchange=NASDAQ&country=United%20States&isEtf=false&isFund=false&isActivelyTrading=true&limit=10&includeAllShareClasses=true&apikey=pLziYh3bDTK9yioOpheiLREFHcpxbK1X
-// Function inputs:
-// - marketCapMoreThan: number
-// - marketCapLessThan: number
-// - sector: string
-// - industry: string
-// - betaMoreThan: number
-// - betaLowerThan: number
-// - priceMoreThan: number
-// - priceLowerThan: number
-// - dividendMoreThan: number
-// - dividendLowerThan: number
-// - volumeMoreThan: number
-// - volumeLowerThan: number
-// - exchange: string
-// - country: string
-// - isEtf: boolean
-// - isFund: boolean
-// - isActivelyTrading: boolean
-// - limit: number
-// - includeAllShareClasses: boolean
-
+/**
+ * Returns all stocks that match the screeners criteria
+ * @param options - The options for the stock screener.
+ * @param options.marketCapMoreThan - The minimum market cap for the stocks.
+ * @param options.marketCapLessThan - The maximum market cap for the stocks.
+ * @param options.sector - The sector for the stocks.
+ * @param options.industry - The industry for the stocks.
+ * @param options.betaMoreThan - The minimum beta for the stocks.
+ * @param options.betaLowerThan - The maximum beta for the stocks.
+ * @param options.priceMoreThan - The minimum price for the stocks.
+ * @param options.priceLowerThan - The maximum price for the stocks.
+ * @param options.dividendMoreThan - The minimum dividend for the stocks.
+ * @param options.dividendLowerThan - The maximum dividend for the stocks.
+ * @param options.volumeMoreThan - The minimum volume for the stocks.
+ * @param options.volumeLowerThan - The maximum volume for the stocks.
+ * @param options.exchange - The exchange for the stocks.
+ * @param options.country - The country for the stocks.
+ * @param options.isEtf - Whether the stocks are ETFs.
+ * @param options.isFund - Whether the stocks are funds.
+ * @param options.isActivelyTrading - Whether the stocks are actively trading.
+ * @param options.limit - The number of stocks to return.
+ * @param options.includeAllShareClasses - Whether to include all share classes.
+ * @returns The stocks that match the screeners criteria.
+ */
 const stockScreener = async <S extends MarketSector = MarketSector>({
 	options,
 }: {
@@ -220,7 +221,7 @@ type SectorIndustryMap = {
 		| 'Silver'
 		| 'Aluminum';
 	'Real Estate':
-		| 'Real Estate Services'
+		| 'Real Estate - Services'
 		| 'REIT - Mortgage'
 		| 'REIT - Retail'
 		| 'REIT - Office'

@@ -1,18 +1,11 @@
-// BASIC INFORMATION ------------------------------------------------------------
-
 import { buildQuery } from './_query-builder';
 
 export const TechnicalAPI = {
 	/**
-	 * Returns the simple daily moving average for a given symbol.
+	 * Calculates the Simple Moving Average (SMA) for a given stock symbol over a specified period.
+	 * The SMA is the unweighted mean of the previous n data points (e.g., closing prices), providing a smoothed trend line for price data.
 	 *
-	 * @param symbol - The symbol of the stock to get the simple daily moving average for.
-	 * @param options - The options for the simple daily moving average.
-	 * @param options.periodLength - The period length of the simple daily moving average.
-	 * @param options.timeframe - The timeframe of the simple daily moving average.
-	 * @param options.from - The start date of the simple daily moving average.
-	 * @param options.to - The end date of the simple daily moving average.
-	 * @returns The simple daily moving average for the given symbol.
+	 * @returns An array of objects containing the date, price data, and the calculated simple moving average (SMA) for each interval in the specified range.
 	 */
 	async simpleMovingAverage(
 		symbol: string,
@@ -31,15 +24,10 @@ export const TechnicalAPI = {
 		return await response.json();
 	},
 	/**
-	 * Returns the exponential daily moving average for a given symbol.
+	 * Calculates the Exponential Moving Average (EMA) for a given stock symbol over a specified period.
+	 * The EMA is a type of moving average that places a greater weight and significance on the most recent data points, making it more responsive to new information.
 	 *
-	 * @param symbol - The symbol of the stock to get the exponential daily moving average for.
-	 * @param options - The options for the exponential daily moving average.
-	 * @param options.periodLength - The period length of the exponential daily moving average.
-	 * @param options.timeframe - The timeframe of the exponential daily moving average.
-	 * @param options.from - The start date of the exponential daily moving average.
-	 * @param options.to - The end date of the exponential daily moving average.
-	 * @returns The exponential daily moving average for the given symbol.
+	 * @returns An array of objects containing the date, price data, and the calculated exponential moving average (EMA) for each interval in the specified range.
 	 */
 	async exponentialMovingAverage(
 		symbol: string,
@@ -59,15 +47,10 @@ export const TechnicalAPI = {
 	},
 
 	/**
-	 * Returns the weighted daily moving average for a given symbol.
+	 * Calculates the Weighted Moving Average (WMA) for a given stock symbol over a specified period.
+	 * The WMA assigns more weight to recent data points, making it more sensitive to new price changes than the simple moving average.
 	 *
-	 * @param symbol - The symbol of the stock to get the weighted daily moving average for.
-	 * @param options - The options for the weighted daily moving average.
-	 * @param options.periodLength - The period length of the weighted daily moving average.
-	 * @param options.timeframe - The timeframe of the weighted daily moving average.
-	 * @param options.from - The start date of the weighted daily moving average.
-	 * @param options.to - The end date of the weighted daily moving average.
-	 * @returns The weighted daily moving average for the given symbol.
+	 * @returns An array of objects containing the date, price data, and the calculated weighted moving average (WMA) for each interval in the specified range.
 	 */
 	async weightedMovingAverage(
 		symbol: string,
@@ -87,15 +70,10 @@ export const TechnicalAPI = {
 	},
 
 	/**
-	 * Returns the double exponential daily moving average for a given symbol.
+	 * Calculates the Double Exponential Moving Average (DEMA) for a given stock symbol over a specified period.
+	 * The DEMA is designed to reduce the lag of traditional moving averages by combining a single and double exponential moving average.
 	 *
-	 * @param symbol - The symbol of the stock to get the double exponential daily moving average for.
-	 * @param options - The options for the double exponential daily moving average.
-	 * @param options.periodLength - The period length of the double exponential daily moving average.
-	 * @param options.timeframe - The timeframe of the double exponential daily moving average.
-	 * @param options.from - The start date of the double exponential daily moving average.
-	 * @param options.to - The end date of the double exponential daily moving average.
-	 * @returns The double exponential daily moving average for the given symbol.
+	 * @returns An array of objects containing the date, price data, and the calculated double exponential moving average (DEMA) for each interval in the specified range.
 	 */
 	async doubleExponentialMovingAverage(
 		symbol: string,
@@ -115,15 +93,10 @@ export const TechnicalAPI = {
 	},
 
 	/**
-	 * Returns the triple exponential daily moving average for a given symbol.
+	 * Calculates the Triple Exponential Moving Average (TEMA) for a given stock symbol over a specified period.
+	 * The TEMA further reduces lag by combining single, double, and triple exponential moving averages, providing a smoother and more responsive trend line.
 	 *
-	 * @param symbol - The symbol of the stock to get the triple exponential daily moving average for.
-	 * @param options - The options for the triple exponential daily moving average.
-	 * @param options.periodLength - The period length of the triple exponential daily moving average.
-	 * @param options.timeframe - The timeframe of the triple exponential daily moving average.
-	 * @param options.from - The start date of the triple exponential daily moving average.
-	 * @param options.to - The end date of the triple exponential daily moving average.
-	 * @returns The triple exponential daily moving average for the given symbol.
+	 * @returns An array of objects containing the date, price data, and the calculated triple exponential moving average (TEMA) for each interval in the specified range.
 	 */
 	async tripleExponentialMovingAverage(
 		symbol: string,
@@ -143,15 +116,10 @@ export const TechnicalAPI = {
 	},
 
 	/**
-	 * Returns the relative strength index for a given symbol.
+	 * Calculates the Relative Strength Index (RSI) for a given stock symbol over a specified period.
+	 * The RSI is a momentum oscillator that measures the speed and change of price movements, typically used to identify overbought or oversold conditions.
 	 *
-	 * @param symbol - The symbol of the stock to get the relative strength index for.
-	 * @param options - The options for the relative strength index.
-	 * @param options.periodLength - The period length of the relative strength index.
-	 * @param options.timeframe - The timeframe of the relative strength index.
-	 * @param options.from - The start date of the relative strength index.
-	 * @param options.to - The end date of the relative strength index.
-	 * @returns The relative strength index for the given symbol.
+	 * @returns An array of objects containing the date, price data, and the calculated relative strength index (RSI) for each interval in the specified range.
 	 */
 	async relativeStrengthIndex(
 		symbol: string,
@@ -171,15 +139,10 @@ export const TechnicalAPI = {
 	},
 
 	/**
-	 * Returns the standard deviation for a given symbol.
+	 * Calculates the Standard Deviation for a given stock symbol over a specified period.
+	 * Standard deviation is a statistical measure of price volatility, indicating how much the price deviates from its average over the period.
 	 *
-	 * @param symbol - The symbol of the stock to get the standard deviation for.
-	 * @param options - The options for the standard deviation.
-	 * @param options.periodLength - The period length of the standard deviation.
-	 * @param options.timeframe - The timeframe of the standard deviation.
-	 * @param options.from - The start date of the standard deviation.
-	 * @param options.to - The end date of the standard deviation.
-	 * @returns The standard deviation for the given symbol.
+	 * @returns An array of objects containing the date, price data, and the calculated standard deviation for each interval in the specified range.
 	 */
 	async standardDeviation(
 		symbol: string,
@@ -199,15 +162,10 @@ export const TechnicalAPI = {
 	},
 
 	/**
-	 * Returns the Williams %R for a given symbol.
+	 * Calculates the Williams %R for a given stock symbol over a specified period.
+	 * Williams %R is a momentum indicator that measures overbought and oversold levels, similar to the stochastic oscillator.
 	 *
-	 * @param symbol - The symbol of the stock to get the Williams %R for.
-	 * @param options - The options for the Williams %R.
-	 * @param options.periodLength - The period length of the Williams %R.
-	 * @param options.timeframe - The timeframe of the Williams %R.
-	 * @param options.from - The start date of the Williams %R.
-	 * @param options.to - The end date of the Williams %R.
-	 * @returns The Williams %R for the given symbol.
+	 * @returns An array of objects containing the date, price data, and the calculated Williams %R value for each interval in the specified range.
 	 */
 	async williamsR(
 		symbol: string,
@@ -227,15 +185,10 @@ export const TechnicalAPI = {
 	},
 
 	/**
-	 * Returns the average directional index for a given symbol.
+	 * Calculates the Average Directional Index (ADX) for a given stock symbol over a specified period.
+	 * The ADX is a trend strength indicator, quantifying the strength of a trend but not its direction.
 	 *
-	 * @param symbol - The symbol of the stock to get the average directional index for.
-	 * @param options - The options for the average directional index.
-	 * @param options.periodLength - The period length of the average directional index.
-	 * @param options.timeframe - The timeframe of the average directional index.
-	 * @param options.from - The start date of the average directional index.
-	 * @param options.to - The end date of the average directional index.
-	 * @returns The average directional index for the given symbol.
+	 * @returns An array of objects containing the date, price data, and the calculated average directional index (ADX) for each interval in the specified range.
 	 */
 	async averageDirectionalIndex(
 		symbol: string,
@@ -254,6 +207,12 @@ export const TechnicalAPI = {
 		return await response.json();
 	},
 
+	/**
+	 * Retrieves the latest quote and summary statistics for a given stock symbol.
+	 * The quote includes current price, volume, daily and yearly highs/lows, and other key market data.
+	 *
+	 * @returns An array containing the latest quote and related statistics for the specified symbol.
+	 */
 	async quote(symbol: string): Promise<QuoteArr> {
 		const query = buildQuery('quote', {
 			symbol,

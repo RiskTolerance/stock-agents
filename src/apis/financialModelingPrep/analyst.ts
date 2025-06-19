@@ -3,12 +3,8 @@ import { buildQuery } from './_query-builder';
 export const AnalystAPI = {
 	/**
 	 * Returns annual financial estimates for a given symbol.
-	 *
-	 * @param symbol - The symbol of the stock to get financial estimates for.
-	 * @param options - The options for the financial estimates.
-	 * @param options.page - The page number of the financial estimates.
-	 * @param options.limit - The number of financial estimates to return (must be less than 10).
-	 * @returns The financial estimates for the given symbol.
+	 * Financial estimates include analyst projections for revenue, EBITDA, EBIT, net income, SG&A expenses, and EPS, with high, low, and average values, as well as the number of analysts contributing to each estimate.
+	 * @returns An array of objects containing annual analyst financial estimates for the specified symbol, including projected revenue, earnings, and other key metrics.
 	 */
 	async financialEstimates(
 		symbol: string,
@@ -34,9 +30,8 @@ export const AnalystAPI = {
 
 	/**
 	 * Returns a rating snapshot for a given symbol.
-	 *
-	 * @param symbol - The symbol of the stock to get a rating snapshot for.
-	 * @returns The ratings snapshot for the given symbol.
+	 * The ratings snapshot provides a summary of various financial health and valuation scores, such as discounted cash flow, return on equity, debt to equity, and price-based ratios, as assessed by analysts.
+	 * @returns An array of objects containing the latest analyst ratings and financial health scores for the specified symbol.
 	 */
 	async ratingSnapshot(symbol: string): Promise<RatingsSnapshotArr> {
 		const query = buildQuery('ratings-snapshot', {
@@ -48,10 +43,8 @@ export const AnalystAPI = {
 
 	/**
 	 * Returns historical ratings for a given symbol (annual).
-	 *
-	 * @param symbol - The symbol of the stock to get a historical ratings for.
-	 * @param limit - The number of historical ratings to return (must be less than 10).
-	 * @returns The historical ratings for the given symbol.
+	 * Historical ratings track how analyst ratings and financial health scores have changed over time, allowing for trend analysis and backtesting of analyst sentiment.
+	 * @returns An array of objects showing the evolution of analyst ratings and scores for the specified symbol over time.
 	 */
 	async historicalRatings(
 		symbol: string,
@@ -67,9 +60,8 @@ export const AnalystAPI = {
 
 	/**
 	 * Returns analyst price targets for a given symbol (US only).
-	 *
-	 * @param symbol - The symbol of the stock to get analyst price targets for.
-	 * @returns The analyst price targets for the given symbol.
+	 * Analyst price targets summarize the average target prices set by analysts over different time frames (last month, quarter, year, and all time), along with the number of analysts contributing to each period.
+	 * @returns An array of objects containing analyst price target statistics for the specified symbol, including averages and counts for various periods.
 	 */
 	async analystPriceTarget(symbol: string): Promise<AnalystPriceTargetArr> {
 		const query = buildQuery('analyst-price-target', {
@@ -81,9 +73,8 @@ export const AnalystAPI = {
 
 	/**
 	 * Returns analyst price target consensus for a given symbol.
-	 *
-	 * @param symbol - The symbol of the stock to get price target consensus for.
-	 * @returns The analyst price target consensus for the given symbol.
+	 * The price target consensus aggregates analyst price targets to provide high, low, median, and consensus values, offering a summary of analyst expectations for the stock's future price.
+	 * @returns An array of objects containing the consensus, high, low, and median analyst price targets for the specified symbol.
 	 */
 	async analystPriceTargetConsensus(
 		symbol: string
@@ -97,11 +88,9 @@ export const AnalystAPI = {
 
 	/**
 	 * Get the current consensus for a stock's grade.
-	 *
-	 * @param symbol
-	 * @returns The current consensus stock grades for the given symbol.
+	 * The consensus grade aggregates analyst recommendations (e.g., strong buy, buy, hold, sell, strong sell) to provide an overall view of market sentiment for the stock.
+	 * @returns An array of objects containing the current consensus grades and recommendation counts for the specified symbol.
 	 */
-
 	async stockGradesConsensus(symbol: string): Promise<StockGradesConsensusArr> {
 		const query = buildQuery('grades-consensus', {
 			symbol,
@@ -112,10 +101,8 @@ export const AnalystAPI = {
 
 	/**
 	 * Returns stock grade changes for a given symbol (US only).
-	 * This is questionably useful, as it doesn't show the full picture of ratings, but it could possibly be useful to trigger stock reevaluation.
-	 *
-	 * @param symbol - The symbol of the stock to get stock grade changes for.
-	 * @returns The stock grade changes for the given symbol.
+	 * This endpoint provides a record of recent changes in analyst grades for the stock, including the grading company, previous and new grades, and the action taken.
+	 * @returns An array of objects showing recent analyst grade changes for the specified symbol, including the grading company and grade transitions.
 	 */
 	async stockGradeChanges(symbol: string): Promise<StockGradeChangesArr> {
 		const query = buildQuery('grades', {
@@ -125,6 +112,11 @@ export const AnalystAPI = {
 		return await response.json();
 	},
 
+	/**
+	 * Returns the historical analyst grades for a given symbol.
+	 * This endpoint provides a time series of analyst grade distributions (buy, hold, sell, strong sell) for the stock, useful for tracking changes in analyst sentiment over time.
+	 * @returns An array of objects showing the historical distribution of analyst grades for the specified symbol.
+	 */
 	async stockGradeHistory(
 		symbol: string,
 		limit: number

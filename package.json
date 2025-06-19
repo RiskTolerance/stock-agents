@@ -2,6 +2,11 @@
   "name": "mastra-testbed",
   "version": "1.0.0",
   "main": "index.js",
+  "imports": {
+    "#apis/*": "./src/apis/*",
+    "#agents/*": "./src/mastra/agents/*",
+    "#tools/*": "./src/mastra/tools/*"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "mastra dev",
