@@ -1,4 +1,4 @@
-import { buildQuery } from './_query-builder';
+import { buildQuery } from '#apis/financialModelingPrep/_query-builder.ts';
 
 export const AnalystAPI = {
 	/**

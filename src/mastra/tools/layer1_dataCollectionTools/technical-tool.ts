@@ -1,6 +1,6 @@
 import { createTool } from '@mastra/core/tools';
 import { z } from 'zod';
-import { TechnicalAPI } from '#apis/financialModelingPrep/technical.ts';
+import { TechnicalAPI } from '#apis/financialModelingPrep/technical-indicators.ts';
 import dayjs from 'dayjs';
 
 const from = dayjs().subtract(1, 'month').toDate();
