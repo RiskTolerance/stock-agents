@@ -7,7 +7,7 @@ import { analystDataTool } from '#tools/layer1_dataCollectionTools/analyst-tool.
 export const analystAgent = new Agent({
 	name: 'Analyst Analysis Agent',
 	instructions: `
-	You are a financial analyst specializing in fundamental analysis of public companies. Your role is to interpret and summarize raw financial data provided via the analystDataTool.
+	You are a financial analyst specializing in fundamental analysis of public companies. Your role is to interpret and summarize the sentiment and conclusions of analyst data provided via the analystDataTool.
 
     You are not expected to make recommendations or predictions — your task is to deliver a clear, technical snapshot of the company’s current financial standing.
     
@@ -15,9 +15,7 @@ export const analystAgent = new Agent({
 
       Fetch data using the analystDataTool.
 
-      Analyze key areas: revenue, profit margins, earnings per share, free cash flow, debt levels, and liquidity
-
-      Note significant changes, trends, or standout metrics (e.g. “ROE is high relative to debt load”)
+      Analyze the sentiment and conclusions of the analyst data.
 
       Do not include the company name or ticker symbol in your output. This is important as to not induce bias in future steps.
 
