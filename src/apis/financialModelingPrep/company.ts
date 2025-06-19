@@ -13,7 +13,7 @@ export const CompanyAPI = {
 		symbol: string,
 		limit: number
 	): Promise<CompanyEmployeeCountArr> {
-		const query = buildQuery('company-employee-count', {
+		const query = buildQuery('employee-count', {
 			symbol,
 			limit,
 		});
@@ -25,7 +25,7 @@ export const CompanyAPI = {
 		symbol: string,
 		limit: number
 	): Promise<HistoricalCompanyEmployeeCountArr> {
-		const query = buildQuery('historical-company-employee-count', {
+		const query = buildQuery('historical-employee-count', {
 			symbol,
 			limit,
 		});
@@ -34,7 +34,7 @@ export const CompanyAPI = {
 	},
 
 	async marketCap(symbol: string): Promise<CompanyMarketCapArr> {
-		const query = buildQuery('company-market-cap', {
+		const query = buildQuery('market-capitalization', {
 			symbol,
 		});
 		const response = await fetch(query);

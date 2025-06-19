@@ -14,7 +14,7 @@ export const NewsAPI = {
 			limit: number;
 		}
 	): Promise<StockNewsArr> {
-		const query = buildQuery('stock-news', {
+		const query = buildQuery('news/stock', {
 			symbol,
 			...options,
 		});
@@ -128,7 +128,7 @@ const StockGradeNewsSchema = z.object({
 	newsBaseURL: z.string(),
 	newsPublisher: z.string(),
 	newGrade: z.string(),
-	previousGrade: z.string(),
+	previousGrade: z.string().nullable(),
 	gradingCompany: z.string(),
 	action: z.string(),
 	priceWhenPosted: z.number(),

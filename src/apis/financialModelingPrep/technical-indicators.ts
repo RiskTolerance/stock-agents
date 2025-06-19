@@ -225,11 +225,12 @@ export const TechnicalAPI = {
 // TYPES -----------------------------------------------------------
 // Moving Average Base Type
 interface MovingAverageBase {
-	date: Date;
+	date: string; // Format: "YYYY-MM-DD HH:mm:ss"
 	open: number;
 	high: number;
 	low: number;
 	close: number;
+	volume: number;
 }
 
 interface SimpleMovingAverage extends MovingAverageBase {
