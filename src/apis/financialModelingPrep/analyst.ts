@@ -25,7 +25,7 @@ export const AnalystAPI = {
 		if (!response.ok) {
 			throw new Error(`API error: ${response.statusText}`);
 		}
-		return (await response.json()) as FinancialEstimatesArr;
+		return await response.json();
 	},
 
 	/**
@@ -64,7 +64,7 @@ export const AnalystAPI = {
 	 * @returns An array of objects containing analyst price target statistics for the specified symbol, including averages and counts for various periods.
 	 */
 	async analystPriceTarget(symbol: string): Promise<AnalystPriceTargetArr> {
-		const query = buildQuery('analyst-price-target', {
+		const query = buildQuery('price-target-summary', {
 			symbol,
 		});
 		const response = await fetch(query);

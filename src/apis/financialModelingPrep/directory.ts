@@ -16,12 +16,12 @@ export const DirectoryAPI = {
 		const response = await fetch(query);
 		return await response.json();
 	},
-	async avalibleSectors(): Promise<SectorArr> {
+	async availableSectors(): Promise<SectorArr> {
 		const query = buildQuery('available-sectors', {});
 		const response = await fetch(query);
 		return await response.json();
 	},
-	async avalibleIndustries(): Promise<IndustryArr> {
+	async availableIndustries(): Promise<IndustryArr> {
 		const query = buildQuery('available-industries', {});
 		const response = await fetch(query);
 		return await response.json();
@@ -50,6 +50,6 @@ export interface Industry {
 }
 export type IndustryArr = Industry[];
 export interface Sector {
-	industry: string;
+	sector: string;
 }
 export type SectorArr = Sector[];

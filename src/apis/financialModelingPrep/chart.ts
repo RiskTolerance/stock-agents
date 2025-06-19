@@ -1,4 +1,5 @@
 import { buildQuery } from '#apis/financialModelingPrep/_query-builder.ts';
+import dayjs from 'dayjs';
 
 export const ChartAPI = {
 	async light(
@@ -10,7 +11,8 @@ export const ChartAPI = {
 	): Promise<ChartLightArr> {
 		const query = buildQuery('historical-price-eod/light', {
 			symbol,
-			...options,
+			from: dayjs(options.from).format('YYYY-MM-DD'),
+			to: dayjs(options.to).format('YYYY-MM-DD'),
 		});
 		const response = await fetch(query);
 		return await response.json();
@@ -25,7 +27,8 @@ export const ChartAPI = {
 	): Promise<ChartFullArr> {
 		const query = buildQuery('historical-price-eod/full', {
 			symbol,
-			...options,
+			from: dayjs(options.from).format('YYYY-MM-DD'),
+			to: dayjs(options.to).format('YYYY-MM-DD'),
 		});
 		const response = await fetch(query);
 		return await response.json();
@@ -40,7 +43,8 @@ export const ChartAPI = {
 	): Promise<UnadjustedStockPriceArr> {
 		const query = buildQuery('historical-price-eod/non-split-adjusted', {
 			symbol,
-			...options,
+			from: dayjs(options.from).format('YYYY-MM-DD'),
+			to: dayjs(options.to).format('YYYY-MM-DD'),
 		});
 		const response = await fetch(query);
 		return await response.json();
@@ -55,7 +59,8 @@ export const ChartAPI = {
 	): Promise<DividendAdjustedStockPriceArr> {
 		const query = buildQuery('historical-price-eod/dividend-adjusted', {
 			symbol,
-			...options,
+			from: dayjs(options.from).format('YYYY-MM-DD'),
+			to: dayjs(options.to).format('YYYY-MM-DD'),
 		});
 		const response = await fetch(query);
 		return await response.json();
@@ -72,7 +77,9 @@ export const ChartAPI = {
 	): Promise<StockPriceIntervalArr> {
 		const query = buildQuery(`historical-chart/${interval}`, {
 			symbol,
-			...options,
+			from: dayjs(options.from).format('YYYY-MM-DD'),
+			to: dayjs(options.to).format('YYYY-MM-DD'),
+			nonadjusted: options.nonadjusted,
 		});
 		const response = await fetch(query);
 		return await response.json();
