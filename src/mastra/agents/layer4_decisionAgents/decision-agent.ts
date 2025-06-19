@@ -2,11 +2,11 @@ import { openai } from '@ai-sdk/openai';
 import { Agent } from '@mastra/core/agent';
 import { Memory } from '@mastra/memory';
 import { LibSQLStore } from '@mastra/libsql';
-import { vectorQueryTool } from '../tools/vector-query-tool';
+// import { vectorQueryTool } from '../tools/vector-query-tool';
 
 export const decisionAgent = new Agent({
-  name: 'Trader/Decision Agent',
-  instructions: `
+	name: 'Trader/Decision Agent',
+	instructions: `
         You are a lead investment strategist responsible for making a final trading decision — Buy, Sell, or Hold — for a specific stock.
         You have received detailed input from two expert analysts:
 
@@ -36,11 +36,11 @@ export const decisionAgent = new Agent({
             Confidence level: 1-10
             Justification: explain your reasoning, citing support or concerns from both sides and any additional context
   `,
-  model: openai('gpt-4o'), // Placeholder for powerful LLM
-  tools: {},
-  memory: new Memory({
-    storage: new LibSQLStore({
-      url: 'file:../mastra.db',
-    }),
-  }),
-}); 
+	model: openai('gpt-4o'), // Placeholder for powerful LLM
+	tools: {},
+	memory: new Memory({
+		storage: new LibSQLStore({
+			url: 'file:../mastra.db',
+		}),
+	}),
+});
