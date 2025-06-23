@@ -10,13 +10,29 @@ services:
       POSTGRES_DB: local
     volumes:
       - pgdata:/var/lib/postgresql/data
-  monitor:
-    image: monitor
+  orchastrator:
+    image: orchastrator
     build:
-      context: ./monitor
+      context: ./orchastrator
       dockerfile: Dockerfile
     restart: always
     ports:
       - 3000:3000
+  mastra:
+    image: mastra
+    build:
+      context: ./mastra
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 3001:3001
+  # svelte:
+  #   image: svelte
+  #   build:
+  #     context: ./svelte
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   ports:
+  #     - 3002:3002
 volumes:
   pgdata:

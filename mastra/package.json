@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "main": "index.js",
   "imports": {
-    "#apis/*": "./src/apis/*",
     "#agents/*": "./src/mastra/agents/*",
     "#tools/*": "./src/mastra/tools/*"
   },
