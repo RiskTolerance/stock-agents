@@ -7,11 +7,6 @@
     "#tools/*": "./src/mastra/tools/*"
   },
   "scripts": {
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "test:ui": "vitest --ui",
-    "test:integration": "vitest run integration",
     "dev": "mastra dev",
     "build": "mastra build",
     "start": "mastra start"
