@@ -2,7 +2,6 @@ import { openai } from '@ai-sdk/openai';
 import { Agent } from '@mastra/core/agent';
 import { Memory } from '@mastra/memory';
 import { LibSQLStore } from '@mastra/libsql';
-import { vectorQueryTool } from '../tools/vector-query-tool';
 
 export const bearishAgent = new Agent({
 	name: 'Bearish Research Agent',
