@@ -7,7 +7,7 @@ const fmpApi = createFmpApi(`${process.env.FMP_API_KEY}`);
 const execute = async ({ context }: { context: any }) => {
 	const query = context.query;
 	const financialEstimates = await fmpApi.Analyst.financialEstimates(query, {
-		page: 1,
+		page: 0,
 		limit: 10,
 	});
 	const ratingSnapshot = await fmpApi.Analyst.ratingSnapshot(query);

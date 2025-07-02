@@ -10,9 +10,9 @@ const execute = async ({ context }: { context: any }) => {
 	return {};
 };
 
-export const newsTool = createTool({
-	id: 'fetch-news-data',
-	description: 'Fetch news data for a passed stock symbol',
+export const incomeStatementTool = createTool({
+	id: 'fetch-income-statement-data',
+	description: 'Fetch income statement data for a passed stock symbol',
 	inputSchema: z.object({
 		query: z.string(),
 	}),
