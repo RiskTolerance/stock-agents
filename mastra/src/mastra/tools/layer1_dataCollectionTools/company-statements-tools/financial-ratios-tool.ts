@@ -7,7 +7,15 @@ const fmpApi = createFmpApi(`${process.env.FMP_API_KEY}`);
 const execute = async ({ context }: { context: any }) => {
 	const query = context.query;
 
-	return {};
+	// sadly we can only get annual reports on the starter plan 😭
+	const financialRatiosYearly = await fmpApi.Statements.financialRatios(query, {
+		limit: 2,
+		period: 'annual',
+	});
+
+	return {
+		financialRatiosYearly,
+	};
 };
 
 export const financialRatiosTool = createTool({

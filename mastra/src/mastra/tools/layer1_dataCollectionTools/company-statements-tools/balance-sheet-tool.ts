@@ -7,7 +7,20 @@ const fmpApi = createFmpApi(`${process.env.FMP_API_KEY}`);
 const execute = async ({ context }: { context: any }) => {
 	const query = context.query;
 
-	return {};
+	const balanceSheetQuarterly = await fmpApi.Statements.balanceSheet(query, {
+		limit: 4,
+		period: 'quarter',
+	});
+
+	const balanceSheetAnnual = await fmpApi.Statements.balanceSheet(query, {
+		limit: 2,
+		period: 'annual',
+	});
+
+	return {
+		balanceSheetQuarterly,
+		balanceSheetAnnual,
+	};
 };
 
 export const balanceSheetTool = createTool({

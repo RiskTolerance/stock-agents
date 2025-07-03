@@ -15,6 +15,7 @@ const execute = async ({ context }: { context: any }) => {
 	};
 };
 
+// this tool will be used by the technical agent.
 export const discountedCashFlowTool = createTool({
 	id: 'fetch-discounted-cash-flow-data',
 	description: 'Fetch discounted cash flow data for a passed stock symbol',

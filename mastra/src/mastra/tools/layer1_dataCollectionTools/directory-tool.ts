@@ -4,6 +4,8 @@ import { z } from 'zod';
 
 const fmpApi = createFmpApi(`${process.env.FMP_API_KEY}`);
 
+// TODO: implement this endpoint for the evaluation workflow
+
 const execute = async ({ context }: { context: any }) => {
 	const query = context.query;
 

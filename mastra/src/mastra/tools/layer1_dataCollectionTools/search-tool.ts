@@ -7,6 +7,8 @@ const fmpApi = createFmpApi(`${process.env.FMP_API_KEY}`);
 const execute = async ({ context }: { context: any }) => {
 	const query = context.query;
 
+	// TODO: implement this endpoint for the evaluation workflow
+
 	return {};
 };
 

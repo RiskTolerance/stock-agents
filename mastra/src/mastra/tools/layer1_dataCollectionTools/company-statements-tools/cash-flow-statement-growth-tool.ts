@@ -7,7 +7,15 @@ const fmpApi = createFmpApi(`${process.env.FMP_API_KEY}`);
 const execute = async ({ context }: { context: any }) => {
 	const query = context.query;
 
-	return {};
+	const cashFlowStatementGrowthQuarterly =
+		await fmpApi.Statements.cashFlowStatementGrowth(query, 4, 'quarter');
+	const cashFlowStatementGrowthYearly =
+		await fmpApi.Statements.cashFlowStatementGrowth(query, 2, 'annual');
+
+	return {
+		cashFlowStatementGrowthQuarterly,
+		cashFlowStatementGrowthYearly,
+	};
 };
 
 export const cashFlowStatementGrowthTool = createTool({

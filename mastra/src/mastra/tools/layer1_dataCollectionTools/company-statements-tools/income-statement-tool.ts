@@ -7,7 +7,23 @@ const fmpApi = createFmpApi(`${process.env.FMP_API_KEY}`);
 const execute = async ({ context }: { context: any }) => {
 	const query = context.query;
 
-	return {};
+	const incomeStatementQuarterly = await fmpApi.Statements.incomeStatement(
+		query,
+		{
+			limit: 4,
+			period: 'quarter',
+		}
+	);
+
+	const incomeStatementAnnual = await fmpApi.Statements.incomeStatement(query, {
+		limit: 2,
+		period: 'annual',
+	});
+
+	return {
+		incomeStatementQuarterly,
+		incomeStatementAnnual,
+	};
 };
 
 export const incomeStatementTool = createTool({
