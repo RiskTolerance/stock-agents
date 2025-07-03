@@ -17,7 +17,7 @@ export const technicalAgent = new Agent({
 
       Analyze key areas: revenue, profit margins, earnings per share, free cash flow, debt levels, and liquidity
 	`,
-	model: openai('gpt-4o'),
+	model: openai('o4-mini'),
 	tools: { technicalIndicatorTool },
 	memory: new Memory({
 		storage: new LibSQLStore({

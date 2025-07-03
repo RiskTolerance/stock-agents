@@ -14,7 +14,7 @@ export const newsAgent = new Agent({
     - If the symbol is "AMD", you might generate: "Advanced Micro Devices news"
     - If the symbol is "TSLA", you might generate: "Tesla news"
   `,
-	model: openai('gpt-4o'),
+	model: openai('o4-mini'),
 	tools: { newsTool },
 	memory: new Memory({
 		storage: new LibSQLStore({

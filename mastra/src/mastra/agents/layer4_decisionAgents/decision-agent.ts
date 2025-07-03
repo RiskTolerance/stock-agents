@@ -36,7 +36,7 @@ export const decisionAgent = new Agent({
             Confidence level: 1-10
             Justification: explain your reasoning, citing support or concerns from both sides and any additional context
   `,
-	model: openai('gpt-4o'), // Placeholder for powerful LLM
+	model: openai('o3'),
 	tools: {},
 	memory: new Memory({
 		storage: new LibSQLStore({

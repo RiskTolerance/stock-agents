@@ -4,7 +4,7 @@ import { Memory } from '@mastra/memory';
 import { LibSQLStore } from '@mastra/libsql';
 
 export const bullishAgent = new Agent({
-	name: 'Bullish Research Agent',
+	name: 'Bullish Agent',
 	instructions: `
     You are a professional equity analyst tasked with making a bearish case for the stock under review.
     Your role is not to reflexively oppose the bull analyst, but to highlight the most compelling risks, weaknesses, or reasons for caution based on the available data.
@@ -23,7 +23,7 @@ export const bullishAgent = new Agent({
 
     Emphasize facts that support a “wait,” “reduce,” or “sell” perspective. You are a measured, data-driven skeptic, not an alarmist.
   `,
-	model: openai('gpt-4o'), // Placeholder for reasoning LLM
+	model: openai('gpt-4.1'),
 	tools: {},
 	memory: new Memory({
 		storage: new LibSQLStore({

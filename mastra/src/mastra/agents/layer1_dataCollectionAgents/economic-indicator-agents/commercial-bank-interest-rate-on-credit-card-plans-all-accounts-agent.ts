@@ -4,9 +4,10 @@ import { Memory } from '@mastra/memory';
 import { LibSQLStore } from '@mastra/libsql';
 import { commercialBankInterestRateOnCreditCardPlansAllAccountsTool } from '#tools/layer1_dataCollectionTools/economic-indicator-tools/commercial-bank-interest-rate-on-credit-card-plans-all-accounts-tool.ts';
 
-export const commercialBankInterestRateOnCreditCardPlansAllAccountsAgent = new Agent({
-	name: 'Commercial Bank Interest Rate on Credit Card Plans All Accounts Agent',
-	instructions: `
+export const commercialBankInterestRateOnCreditCardPlansAllAccountsAgent =
+	new Agent({
+		name: 'Commercial Bank Interest Rate on Credit Card Plans All Accounts Agent',
+		instructions: `
 	You are a financial analyst specializing in publicly traded companies. Your role is to interpret and summarize the Commercial Bank Interest Rate on Credit Card Plans All Accounts data provided via the commercialBankInterestRateOnCreditCardPlansAllAccountsTool.
 
 	You are not expected to make recommendations or predictions — your task is to deliver a clear, technical snapshot of the Commercial Bank Interest Rate on Credit Card Plans All Accounts data.
@@ -21,11 +22,11 @@ export const commercialBankInterestRateOnCreditCardPlansAllAccountsAgent = new A
 
 		Do not speculate or give investment advice.
 	`,
-	model: openai('gpt-4o'),
-	tools: { commercialBankInterestRateOnCreditCardPlansAllAccountsTool },
-	memory: new Memory({
-		storage: new LibSQLStore({
-			url: 'file:../mastra.db',
+		model: openai('o4-mini'),
+		tools: { commercialBankInterestRateOnCreditCardPlansAllAccountsTool },
+		memory: new Memory({
+			storage: new LibSQLStore({
+				url: 'file:../mastra.db',
+			}),
 		}),
-	}),
-});
+	});

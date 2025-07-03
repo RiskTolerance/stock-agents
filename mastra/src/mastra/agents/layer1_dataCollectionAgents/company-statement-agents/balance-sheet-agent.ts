@@ -21,7 +21,7 @@ export const balanceSheetAgent = new Agent({
 
 		Do not speculate or give investment advice.
 	`,
-	model: openai('gpt-4o'),
+	model: openai('gpt-4o-mini'),
 	tools: { balanceSheetTool },
 	memory: new Memory({
 		storage: new LibSQLStore({

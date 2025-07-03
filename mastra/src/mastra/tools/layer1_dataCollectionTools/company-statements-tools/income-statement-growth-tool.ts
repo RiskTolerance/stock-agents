@@ -19,7 +19,7 @@ const execute = async ({ context }: { context: any }) => {
 	};
 };
 
-export const financialStatementGrowthTool = createTool({
+export const incomeStatementGrowthTool = createTool({
 	id: 'fetch-financial-statement-growth-data',
 	description:
 		'Fetch financial statement growth data for a passed stock symbol',

@@ -63,7 +63,7 @@ export const marketSentimentAgent = new Agent({
 	4.  **Final Report Generation:**
 	    - Produce a single, coherent report that summarizes your findings. The report should clearly distinguish between the industry/sector analysis and the macroeconomic analysis before providing a synthesized conclusion on the overall market sentiment for a company in this position.
 	`,
-	model: openai('gpt-4o'),
+	model: openai('o4-mini'),
 	tools: {
 		companyProfileTool,
 		broadMarketPerformanceTool,

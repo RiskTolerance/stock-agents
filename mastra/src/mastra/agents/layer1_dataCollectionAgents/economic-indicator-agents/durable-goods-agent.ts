@@ -21,7 +21,7 @@ export const durableGoodsAgent = new Agent({
 
 		Do not speculate or give investment advice.
 	`,
-	model: openai('gpt-4o'),
+	model: openai('o4-mini'),
 	tools: { durableGoodsTool },
 	memory: new Memory({
 		storage: new LibSQLStore({

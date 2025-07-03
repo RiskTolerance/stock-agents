@@ -21,7 +21,7 @@ export const retailMoneyFundsAgent = new Agent({
 
 		Do not speculate or give investment advice.
 	`,
-	model: openai('gpt-4o'),
+	model: openai('o4-mini'),
 	tools: { retailMoneyFundsTool },
 	memory: new Memory({
 		storage: new LibSQLStore({

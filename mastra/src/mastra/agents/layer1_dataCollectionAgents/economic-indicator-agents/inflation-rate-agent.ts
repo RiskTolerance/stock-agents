@@ -21,7 +21,7 @@ export const inflationRateAgent = new Agent({
 
 		Do not speculate or give investment advice.
 	`,
-	model: openai('gpt-4o'),
+	model: openai('o4-mini'),
 	tools: { inflationRateTool },
 	memory: new Memory({
 		storage: new LibSQLStore({
