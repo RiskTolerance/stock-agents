@@ -8,16 +8,16 @@ const execute = async ({ context }: { context: any }) => {
 	const query = context.query;
 	const financialEstimates = await fmpApi.Analyst.financialEstimates(query, {
 		page: 0,
-		limit: 10,
+		limit: 9,
 	});
 	const ratingSnapshot = await fmpApi.Analyst.ratingSnapshot(query);
-	const historicalRatings = await fmpApi.Analyst.historicalRatings(query, 10);
+	const historicalRatings = await fmpApi.Analyst.historicalRatings(query, 9);
 	const analystPriceTarget = await fmpApi.Analyst.analystPriceTarget(query);
 	const analystPriceTargetConsensus =
 		await fmpApi.Analyst.analystPriceTargetConsensus(query);
 	const stockGradesConsensus = await fmpApi.Analyst.stockGradesConsensus(query);
 	const stockGradeChanges = await fmpApi.Analyst.stockGradeChanges(query);
-	const stockGradeHistory = await fmpApi.Analyst.stockGradeHistory(query, 10);
+	const stockGradeHistory = await fmpApi.Analyst.stockGradeHistory(query, 9);
 	return {
 		financialEstimates,
 		ratingSnapshot,

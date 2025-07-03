@@ -2,7 +2,7 @@ import { openai } from '@ai-sdk/openai';
 import { Agent } from '@mastra/core/agent';
 import { Memory } from '@mastra/memory';
 import { LibSQLStore } from '@mastra/libsql';
-import { balanceSheetTool } from '#tools/layer1_dataCollectionTools/company-statements-tools/balance-sheet-tool.ts';
+import { balanceSheetTool } from '../../../tools/layer1_dataCollectionTools/company-statements-tools/balance-sheet-tool.ts';
 
 export const balanceSheetAgent = new Agent({
 	name: 'Balance Sheet Agent',

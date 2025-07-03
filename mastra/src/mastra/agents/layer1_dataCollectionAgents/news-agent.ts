@@ -2,7 +2,7 @@ import { openai } from '@ai-sdk/openai';
 import { Agent } from '@mastra/core/agent';
 import { Memory } from '@mastra/memory';
 import { LibSQLStore } from '@mastra/libsql';
-import { newsTool } from '#tools/layer1_dataCollectionTools/news-tool.ts';
+import { newsTool } from '../../tools/layer1_dataCollectionTools/news-tool.ts';
 
 export const newsAgent = new Agent({
 	name: 'News Analysis Agent',

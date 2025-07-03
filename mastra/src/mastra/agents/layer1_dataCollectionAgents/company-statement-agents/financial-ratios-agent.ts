@@ -2,7 +2,7 @@ import { openai } from '@ai-sdk/openai';
 import { Agent } from '@mastra/core/agent';
 import { Memory } from '@mastra/memory';
 import { LibSQLStore } from '@mastra/libsql';
-import { financialRatiosTool } from '#tools/layer1_dataCollectionTools/company-statements-tools/financial-ratios-tool.ts';
+import { financialRatiosTool } from '../../../tools/layer1_dataCollectionTools/company-statements-tools/financial-ratios-tool.ts';
 
 export const financialRatiosAgent = new Agent({
 	name: 'Financial Ratios Agent',

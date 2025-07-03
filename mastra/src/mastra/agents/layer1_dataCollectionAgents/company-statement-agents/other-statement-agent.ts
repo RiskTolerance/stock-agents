@@ -2,7 +2,7 @@ import { openai } from '@ai-sdk/openai';
 import { Agent } from '@mastra/core/agent';
 import { Memory } from '@mastra/memory';
 import { LibSQLStore } from '@mastra/libsql';
-import { otherStatementTool } from '#tools/layer1_dataCollectionTools/company-statements-tools/other-statement-tool.ts';
+import { otherStatementTool } from '../../../tools/layer1_dataCollectionTools/company-statements-tools/other-statement-tool.ts';
 
 export const otherStatementAgent = new Agent({
 	name: 'Other Statement Agent',

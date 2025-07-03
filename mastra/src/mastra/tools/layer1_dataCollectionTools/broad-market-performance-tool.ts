@@ -13,6 +13,14 @@ const execute = async ({ context }: { context: any }) => {
 	const sector = companyData[0].sector as any;
 	const exchange = companyData[0].exchange as 'NASDAQ' | 'NYSE' | 'AMEX';
 
+	console.log(
+		`industry: ${industry}, sector: ${sector}, exchange: ${exchange}`
+	);
+
+	if (!industry || !sector || !exchange) {
+		throw new Error('Industry, sector, or exchange not found');
+	}
+
 	const industryPerformance =
 		await fmpApi.MarketPerformance.industryPerformanceHistory({
 			options: industry,

@@ -2,7 +2,7 @@ import { openai } from '@ai-sdk/openai';
 import { Agent } from '@mastra/core/agent';
 import { Memory } from '@mastra/memory';
 import { LibSQLStore } from '@mastra/libsql';
-import { insiderTradesTool } from '#tools/layer1_dataCollectionTools/insider-trades-tool.ts';
+import { insiderTradesTool } from '../../tools/layer1_dataCollectionTools/insider-trades-tool.ts';
 
 export const insiderAgent = new Agent({
 	name: 'Insider Trades Agent',

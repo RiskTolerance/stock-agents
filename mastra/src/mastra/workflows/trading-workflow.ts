@@ -1,24 +1,24 @@
 import { createStep, createWorkflow } from '@mastra/core/workflows';
 import { z } from 'zod';
-import { analystAgent } from '#agents/layer1_dataCollectionAgents/analyst-agent.ts';
-import { companySummaryAgent } from '#agents/layer1_dataCollectionAgents/company-summary-agent.ts';
-import { insiderAgent } from '#agents/layer1_dataCollectionAgents/insider-agent.ts';
-import { marketSentimentAgent } from '#agents/layer1_dataCollectionAgents/market-sentiment-agent.ts';
-import { newsAgent } from '#agents/layer1_dataCollectionAgents/news-agent.ts';
-import { technicalAgent } from '#agents/layer1_dataCollectionAgents/technical-agent.ts';
-import { balanceSheetAgent } from '#agents/layer1_dataCollectionAgents/company-statement-agents/balance-sheet-agent.ts';
-import { balanceSheetStatementGrowthAgent } from '#agents/layer1_dataCollectionAgents/company-statement-agents/balance-sheet-statement-growth-agent.ts';
-import { cashFlowAgent } from '#agents/layer1_dataCollectionAgents/company-statement-agents/cash-flow-agent.ts';
-import { cashFlowStatementGrowthAgent } from '#agents/layer1_dataCollectionAgents/company-statement-agents/cash-flow-statement-growth-agent.ts';
-import { financialRatiosAgent } from '#agents/layer1_dataCollectionAgents/company-statement-agents/financial-ratios-agent.ts';
-import { incomeStatementAgent } from '#agents/layer1_dataCollectionAgents/company-statement-agents/income-statement-agent.ts';
-import { keyMetricsAgent } from '#agents/layer1_dataCollectionAgents/company-statement-agents/key-metrics-agent.ts';
-import { otherStatementAgent } from '#agents/layer1_dataCollectionAgents/company-statement-agents/other-statement-agent.ts';
-import { bullishAgent } from '#agents/layer2_reasoningAgents/bullish-agent.ts';
-import { bearishAgent } from '#agents/layer2_reasoningAgents/bearish-agent.ts';
-import { bullishRebuttalAgent } from '#agents/layer3_reasoningRebuttalAgents/bullish-rebuttal-agent.ts';
-import { bearishRebuttalAgent } from '#agents/layer3_reasoningRebuttalAgents/bearish-rebuttal-agent.ts';
-import { decisionAgent } from '#agents/layer4_decisionAgents/decision-agent.ts';
+import { analystAgent } from '../agents/layer1_dataCollectionAgents/analyst-agent.ts';
+import { companySummaryAgent } from '../agents/layer1_dataCollectionAgents/company-summary-agent.ts';
+import { insiderAgent } from '../agents/layer1_dataCollectionAgents/insider-agent.ts';
+// import { marketSentimentAgent } from '../agents/layer1_dataCollectionAgents/market-sentiment-agent.ts';
+import { newsAgent } from '../agents/layer1_dataCollectionAgents/news-agent.ts';
+import { technicalAgent } from '../agents/layer1_dataCollectionAgents/technical-agent.ts';
+import { balanceSheetAgent } from '../agents/layer1_dataCollectionAgents/company-statement-agents/balance-sheet-agent.ts';
+import { balanceSheetStatementGrowthAgent } from '../agents/layer1_dataCollectionAgents/company-statement-agents/balance-sheet-statement-growth-agent.ts';
+import { cashFlowAgent } from '../agents/layer1_dataCollectionAgents/company-statement-agents/cash-flow-agent.ts';
+import { cashFlowStatementGrowthAgent } from '../agents/layer1_dataCollectionAgents/company-statement-agents/cash-flow-statement-growth-agent.ts';
+// import { financialRatiosAgent } from '../agents/layer1_dataCollectionAgents/company-statement-agents/financial-ratios-agent.ts';
+import { incomeStatementAgent } from '../agents/layer1_dataCollectionAgents/company-statement-agents/income-statement-agent.ts';
+import { keyMetricsAgent } from '../agents/layer1_dataCollectionAgents/company-statement-agents/key-metrics-agent.ts';
+import { otherStatementAgent } from '../agents/layer1_dataCollectionAgents/company-statement-agents/other-statement-agent.ts';
+import { bullishAgent } from '../agents/layer2_reasoningAgents/bullish-agent.ts';
+import { bearishAgent } from '../agents/layer2_reasoningAgents/bearish-agent.ts';
+import { bullishRebuttalAgent } from '../agents/layer3_reasoningRebuttalAgents/bullish-rebuttal-agent.ts';
+import { bearishRebuttalAgent } from '../agents/layer3_reasoningRebuttalAgents/bearish-rebuttal-agent.ts';
+import { decisionAgent } from '../agents/layer4_decisionAgents/decision-agent.ts';
 
 const contextSchema = z.object({
 	symbol: z.string(),
@@ -34,7 +34,7 @@ const contextSchema = z.object({
 			balance_sheet_growth: z.any().optional(),
 			cash_flow: z.any().optional(),
 			cash_flow_growth: z.any().optional(),
-			financial_ratios: z.any().optional(),
+			// financial_ratios: z.any().optional(),
 			income_statement: z.any().optional(),
 			income_statement_growth: z.any().optional(),
 			key_metrics: z.any().optional(),
@@ -65,14 +65,14 @@ const layer1_dataCollectionStep = createStep({
 			analyst: analystAgent,
 			company_summary: companySummaryAgent,
 			insider: insiderAgent,
-			market_sentiment: marketSentimentAgent,
+			// market_sentiment: marketSentimentAgent,
 			news: newsAgent,
 			technical: technicalAgent,
 			balance_sheet: balanceSheetAgent,
 			balance_sheet_growth: balanceSheetStatementGrowthAgent,
 			cash_flow: cashFlowAgent,
 			cash_flow_growth: cashFlowStatementGrowthAgent,
-			financial_ratios: financialRatiosAgent,
+			// financial_ratios: financialRatiosAgent,
 			income_statement: incomeStatementAgent,
 			key_metrics: keyMetricsAgent,
 			other_statement: otherStatementAgent,

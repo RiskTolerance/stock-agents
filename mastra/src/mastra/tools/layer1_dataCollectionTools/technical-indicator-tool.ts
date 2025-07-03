@@ -1,7 +1,6 @@
 import { createTool } from '@mastra/core/tools';
 import { createFmpApi } from 'fmp-api';
 import { z } from 'zod';
-import dayjs from 'dayjs';
 
 const fmpApi = createFmpApi(`${process.env.FMP_API_KEY}`);
 

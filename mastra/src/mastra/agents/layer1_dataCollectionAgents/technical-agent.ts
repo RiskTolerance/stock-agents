@@ -2,7 +2,7 @@ import { openai } from '@ai-sdk/openai';
 import { Agent } from '@mastra/core/agent';
 import { Memory } from '@mastra/memory';
 import { LibSQLStore } from '@mastra/libsql';
-import { technicalIndicatorTool } from '#tools/layer1_dataCollectionTools/technical-indicator-tool.ts';
+import { technicalIndicatorTool } from '../../tools/layer1_dataCollectionTools/technical-indicator-tool.ts';
 
 export const technicalAgent = new Agent({
 	name: 'Technical Analysis Agent',

@@ -2,7 +2,7 @@ import { openai } from '@ai-sdk/openai';
 import { Agent } from '@mastra/core/agent';
 import { Memory } from '@mastra/memory';
 import { LibSQLStore } from '@mastra/libsql';
-import { keyMetricsTool } from '#tools/layer1_dataCollectionTools/company-statements-tools/key-metrics-tool.ts';
+import { keyMetricsTool } from '../../../tools/layer1_dataCollectionTools/company-statements-tools/key-metrics-tool.ts';
 
 export const keyMetricsAgent = new Agent({
 	name: 'Key Metrics Agent',

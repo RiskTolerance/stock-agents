@@ -2,7 +2,7 @@ import { openai } from '@ai-sdk/openai';
 import { Agent } from '@mastra/core/agent';
 import { Memory } from '@mastra/memory';
 import { LibSQLStore } from '@mastra/libsql';
-import { incomeStatementTool } from '#tools/layer1_dataCollectionTools/company-statements-tools/income-statement-tool.ts';
+import { incomeStatementTool } from '../../../tools/layer1_dataCollectionTools/company-statements-tools/income-statement-tool.ts';
 
 export const incomeStatementAgent = new Agent({
 	name: 'Income Statement Agent',

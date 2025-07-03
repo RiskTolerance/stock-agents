@@ -2,7 +2,7 @@ import { openai } from '@ai-sdk/openai';
 import { Agent } from '@mastra/core/agent';
 import { Memory } from '@mastra/memory';
 import { LibSQLStore } from '@mastra/libsql';
-import { cashFlowStatementGrowthTool } from '#tools/layer1_dataCollectionTools/company-statements-tools/cash-flow-statement-growth-tool.ts';
+import { cashFlowStatementGrowthTool } from '../../../tools/layer1_dataCollectionTools/company-statements-tools/cash-flow-statement-growth-tool.ts';
 
 export const cashFlowStatementGrowthAgent = new Agent({
 	name: 'Cash Flow Growth Agent',

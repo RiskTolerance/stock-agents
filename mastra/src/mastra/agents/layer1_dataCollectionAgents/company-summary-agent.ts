@@ -2,7 +2,7 @@ import { openai } from '@ai-sdk/openai';
 import { Agent } from '@mastra/core/agent';
 import { Memory } from '@mastra/memory';
 import { LibSQLStore } from '@mastra/libsql';
-import { companySummaryTool } from '#tools/layer1_dataCollectionTools/company-summary-tool.ts';
+import { companySummaryTool } from '../../tools/layer1_dataCollectionTools/company-summary-tool.ts';
 
 export const companySummaryAgent = new Agent({
 	name: 'Company Overview Agent',
