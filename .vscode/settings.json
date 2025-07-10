@@ -1,3 +1,23 @@
 {
-  "typescript.experimental.expandableHover": true
+  "typescript.experimental.expandableHover": true,
+  "files.exclude": {
+    "svelte/.env.example": true,
+    "svelte/components.json": true,
+    "svelte/drizzle.config.ts": true,
+    "svelte/.prettierignore": true,
+    "svelte/.prettierrc": true,
+    "svelte/pnpm-lock.yaml": true,
+    "svelte/README.md": true,
+    "svelte/svelte.config.js": true,
+    "svelte/package.json": true,
+    "svelte/vite.config.ts": true,
+    "svelte/eslint.config.js": true,
+    "svelte/tailwind.config.cjs": true,
+    "svelte/tsconfig.json": true,
+    "svelte/.npmrc": true,
+    "svelte/Dockerfile": true,
+    "svelte/.gitignore": true,
+    "svelte/vitest-setup-client.ts": true,
+    "svelte/.env": true
+  }
 }

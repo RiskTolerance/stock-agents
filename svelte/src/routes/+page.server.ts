@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 export const load: PageServerLoad = async () => {
 	// const data = await createFmpApi(FMP_API_KEY).Analyst.analystPriceTarget('AAPL');
 	const fmpApi = createFmpApi(FMP_API_KEY);
-	const priceChartData = await fmpApi.Chart.light('AAPL', {
+	const priceChartData = await fmpApi.Chart.light('GOOGL', {
 		from: dayjs().subtract(90, 'day').format('YYYY-MM-DD') as unknown as Date,
 		to: dayjs().format('YYYY-MM-DD') as unknown as Date // TODO: change types to string
 	});
