@@ -17,7 +17,11 @@ export default defineConfig({
 						provider: 'playwright',
 						instances: [{ browser: 'chromium' }]
 					},
-					include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
+					include: [
+						'src/**/*.svelte.{test,spec}.{js,ts}'
+						// './node_modules/svelte-ux/**/*.{svelte,js}',
+						// './node_modules/layerchart/**/*.{svelte,js}'
+					],
 					exclude: ['src/lib/server/**'],
 					setupFiles: ['./vitest-setup-client.ts']
 				}
