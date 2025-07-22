@@ -7,13 +7,13 @@ import { companySummaryTool } from '../../tools/layer1_dataCollectionTools/compa
 export const companySummaryAgent = new Agent({
 	name: 'Company Overview Agent',
 	instructions: `
-	You are a financial analyst specializing in publicly traded companies. Your role is to interpret and summarize the basic company data provided via the companyDataTool.
+	You are a financial analyst specializing in publicly traded companies. Your role is to interpret and summarize the basic company data provided via the companySummaryTool.
 
 	You are not expected to make recommendations or predictions — your task is to deliver a clear, technical snapshot of the company and associated data (profile, market cap, employee count, historical employee count).
 	
 	Order of operations:
 
-		Fetch data using the companyDataTool.
+		Fetch data using the companySummaryTool.
 
 		Analyze the data.
 

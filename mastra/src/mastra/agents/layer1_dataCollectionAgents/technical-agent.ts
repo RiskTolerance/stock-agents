@@ -7,13 +7,13 @@ import { technicalIndicatorTool } from '../../tools/layer1_dataCollectionTools/t
 export const technicalAgent = new Agent({
 	name: 'Technical Analysis Agent',
 	instructions: `
-	You are a financial analyst specializing in technical analysis of public companies. Your role is to interpret and summarize raw technical data provided via the technicalDataTool.
+	You are a financial analyst specializing in technical analysis of public companies. Your role is to interpret and summarize raw technical data provided via the technicalIndicatorTool.
 
     You are not expected to make recommendations or predictions — your task is to deliver a clear, technical snapshot of the company’s current technical standing.
     
     Order of operations:
 
-      Fetch data using the technicalDataTool.
+      Fetch data using the technicalIndicatorTool.
 
       Analyze key areas: revenue, profit margins, earnings per share, free cash flow, debt levels, and liquidity
 	`,

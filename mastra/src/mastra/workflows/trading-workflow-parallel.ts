@@ -3,7 +3,6 @@ import { z } from 'zod';
 import { analystAgent } from '../agents/layer1_dataCollectionAgents/analyst-agent.ts';
 import { companySummaryAgent } from '../agents/layer1_dataCollectionAgents/company-summary-agent.ts';
 import { insiderAgent } from '../agents/layer1_dataCollectionAgents/insider-agent.ts';
-import { marketSentimentAgent } from '../agents/layer1_dataCollectionAgents/market-sentiment-agent.ts';
 import { newsAgent } from '../agents/layer1_dataCollectionAgents/news-agent.ts';
 import { technicalAgent } from '../agents/layer1_dataCollectionAgents/technical-agent.ts';
 import { balanceSheetAgent } from '../agents/layer1_dataCollectionAgents/company-statement-agents/balance-sheet-agent.ts';
@@ -19,6 +18,7 @@ import { bearishAgent } from '../agents/layer2_reasoningAgents/bearish-agent.ts'
 import { bullishRebuttalAgent } from '../agents/layer3_reasoningRebuttalAgents/bullish-rebuttal-agent.ts';
 import { bearishRebuttalAgent } from '../agents/layer3_reasoningRebuttalAgents/bearish-rebuttal-agent.ts';
 import { decisionAgent } from '../agents/layer4_decisionAgents/decision-agent.ts';
+import { economicIndicatorAgent } from '../agents/layer1_dataCollectionAgents/economic-indicator-agent.ts';
 
 const contextSchema = z.object({
 	symbol: z.string(),
@@ -75,22 +75,6 @@ const layer1Steps = [
 			let output = '';
 			for await (const chunk of result.textStream) output += chunk;
 			return { insider: output };
-		},
-	}),
-	createStep({
-		id: 'market_sentiment',
-		inputSchema: z.object({ symbol: z.string() }),
-		outputSchema: z.object({ market_sentiment: z.string() }),
-		execute: async ({ inputData }) => {
-			const result = await marketSentimentAgent.stream([
-				{
-					role: 'user',
-					content: `Analyze data for stock symbol: ${inputData.symbol}`,
-				},
-			]);
-			let output = '';
-			for await (const chunk of result.textStream) output += chunk;
-			return { market_sentiment: output };
 		},
 	}),
 	createStep({
@@ -253,6 +237,22 @@ const layer1Steps = [
 			return { other_statement: output };
 		},
 	}),
+	createStep({
+		id: 'economic_indicator',
+		inputSchema: z.object({ symbol: z.string() }),
+		outputSchema: z.object({ economic_indicator: z.string() }),
+		execute: async ({ inputData }) => {
+			const result = await economicIndicatorAgent.stream([
+				{
+					role: 'user',
+					content: `Analyze data for stock symbol: ${inputData.symbol}`,
+				},
+			]);
+			let output = '';
+			for await (const chunk of result.textStream) output += chunk;
+			return { economic_indicator: output };
+		},
+	}),
 ];
 
 // Layer 2: Reasoning Steps (parallel)
@@ -368,7 +368,7 @@ const layer1MapStepFn = async ({
 }) => {
 	const layer1_data = Object.assign({}, ...Object.values(inputData));
 	const { symbol } = getInitData();
-	return { symbol, layer1_data };
+	return { layer1_data };
 };
 const layer2MapStepFn = async ({
 	inputData,

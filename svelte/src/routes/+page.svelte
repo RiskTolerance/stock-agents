@@ -10,7 +10,7 @@
 	});
 
 	let symbol = $state('AAPL');
-	import { AreaChart, Axis, Spline, Svg } from 'layerchart';
+	import { AreaChart, Axis, Spline, Svg, Tooltip, Highlight } from 'layerchart';
 	import dayjs from 'dayjs';
 
 	const search = async () => {
@@ -123,6 +123,7 @@
 								x="date"
 								y="price"
 								yDomain={[getYDomain().min, getYDomain().max]}
+								tooltip={{ mode: 'bisect-x' }}
 							>
 								<Svg>
 									<Axis class="fill-white" placement="left" grid rule></Axis>
@@ -133,7 +134,17 @@
 										rule
 									></Axis>
 									<Spline class="stroke-2 stroke-teal-500"></Spline>
+									<Highlight points lines></Highlight>
 								</Svg>
+								<Tooltip.Root>
+									{@const data = stockData[0]}
+									<Tooltip.Header>
+										{dayjs(data.date).format('DD MMM YY')}
+									</Tooltip.Header>
+									<Tooltip.List>
+										<Tooltip.Item label="value" value={data.price}></Tooltip.Item>
+									</Tooltip.List>
+								</Tooltip.Root>
 							</AreaChart>
 						</div>
 					</div>
@@ -145,9 +156,9 @@
 	<div class="bg w-full h-1/5 bg-linear-to-b from-zinc-800 to-zinc-900 relative z-0"></div>
 </div>
 
-<!-- {#if data}
+{#if data}
 	<pre>{JSON.stringify(data, null, 2)}</pre>
-{/if} -->
+{/if}
 
 <style>
 	.bg::after {

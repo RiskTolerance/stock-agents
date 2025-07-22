@@ -16,6 +16,11 @@ const execute = async ({ context }: { context: any }) => {
 		limit: 2,
 		period: 'annual',
 	});
+
+	return {
+		cashFlowQuarterly,
+		cashFlowAnnual,
+	};
 };
 
 export const cashFlowTool = createTool({
