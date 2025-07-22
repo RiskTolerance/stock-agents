@@ -6,10 +6,10 @@ const fmpApi = createFmpApi(`${process.env.FMP_API_KEY}`);
 
 const execute = async ({ context }: { context: any }) => {
 	const query = context.query;
-	const profile = fmpApi.Company.profile(query);
-	const marketCap = fmpApi.Company.marketCap(query);
-	const employeeCount = fmpApi.Company.employeeCount(query, 20);
-	const historicalEmployeeCount = fmpApi.Company.historicalEmployeeCount(
+	const profile = await fmpApi.Company.profile(query);
+	const marketCap = await fmpApi.Company.marketCap(query);
+	const employeeCount = await fmpApi.Company.employeeCount(query, 20);
+	const historicalEmployeeCount = await fmpApi.Company.historicalEmployeeCount(
 		query,
 		20
 	);

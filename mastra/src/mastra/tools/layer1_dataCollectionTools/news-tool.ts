@@ -8,19 +8,19 @@ const fmpApi = createFmpApi(`${process.env.FMP_API_KEY}`);
 const execute = async ({ context }: { context: any }) => {
 	const query = context.query;
 
-	const stockNews = fmpApi.News.stockNews(query, {
+	const stockNews = await fmpApi.News.stockNews(query, {
 		from: dayjs().subtract(1, 'month').toDate(),
 		to: dayjs().toDate(),
 		page: 0,
 		limit: 20,
 	});
 
-	const stockGradeNews = fmpApi.News.stockGradeNews(query, {
+	const stockGradeNews = await fmpApi.News.stockGradeNews(query, {
 		page: 0,
 		limit: 20,
 	});
 
-	const priceTargetNews = fmpApi.News.priceTargetNews(query, 20);
+	const priceTargetNews = await fmpApi.News.priceTargetNews(query, 20);
 
 	return {
 		stockNews,
