@@ -27,7 +27,7 @@ const contextSchema = z.object({
 			analyst: z.any().optional(),
 			company_summary: z.any().optional(),
 			insider: z.any().optional(),
-			market_sentiment: z.any().optional(),
+			// market_sentiment: z.any().optional(),
 			news: z.any().optional(),
 			technical: z.any().optional(),
 			balance_sheet: z.any().optional(),

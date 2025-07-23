@@ -9,7 +9,7 @@
     "svelte/pnpm-lock.yaml": true,
     "svelte/README.md": true,
     "svelte/svelte.config.js": true,
-    "svelte/package.json": true,
+    "svelte/package.json": false,
     "svelte/vite.config.ts": true,
     "svelte/eslint.config.js": true,
     "svelte/tailwind.config.cjs": true,

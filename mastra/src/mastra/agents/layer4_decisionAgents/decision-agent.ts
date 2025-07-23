@@ -26,23 +26,17 @@ Decision-Making Framework:
    - Who won the debate? Did the Bullish Rebuttal agent successfully neutralize the risks presented by the Bear? Or did the Bearish Rebuttal agent effectively poke holes in the optimistic narrative?
    - Were the rebuttals convincing? Did they use strong counter-evidence from the Layer 1 data, or were they weak?
 
-3. Consult the Source of Truth (Layer 1 Data):
-   - Go back to the raw data. Is there a critical piece of information that one of the analysts over-emphasized or missed entirely?
-   - For example, if the whole debate hinged on revenue growth, look at the raw income statement. Was that growth profitable? Was it a one-time event?
-
 4. Synthesize and Decide:
-   - Based on your evaluation of the debate and the raw data, determine the most rational course of action.
-   - Consider the risk/reward profile. A strong bull case might still be a "Hold" if the risks, though rebutted, remain significant.
-   - A weak bear case might still lead to a "Sell" if the underlying data reveals a deeper problem neither analyst fully captured.
+   - Based on your evaluation of the debate, determine the most rational course of action - Buy or Sell.
 
 Final Output Structure:
 
-- Recommended Action: Buy, Sell, or Hold.
+- Recommended Action: Buy or Sell.
 - Confidence Score: A numerical value from 1 (very low confidence) to 10 (highest conviction).
 - Executive Summary: A concise paragraph explaining your final decision.
 - Detailed Justification: A full explanation of your reasoning. Reference the strengths and weaknesses of the bull and bear cases, the effectiveness of their rebuttals, and, most importantly, how the underlying Layer 1 data led you to your conclusion.
 `,
-	model: openai('o3'),
+	model: openai('gpt-4o'),
 	tools: {},
 	memory: new Memory({
 		storage: new LibSQLStore({
