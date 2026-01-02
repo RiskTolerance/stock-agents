@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:24-slim AS builder
+FROM node:22-slim AS builder
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ COPY src ./src
 RUN npx tsc
 
 # Stage 2: Runtime
-FROM node:24-slim
+FROM node:22-slim
 
 WORKDIR /app
 

@@ -1,4 +1,5 @@
 import { createStep, createWorkflow } from '@mastra/core/workflows';
+import type { Step } from '@mastra/core/workflows';
 import { z } from 'zod';
 import { analystAgent } from '../agents/layer1_dataCollectionAgents/analyst-agent.ts';
 import { companySummaryAgent } from '../agents/layer1_dataCollectionAgents/company-summary-agent.ts';
@@ -28,7 +29,7 @@ const contextSchema = z.object({
 });
 
 // Layer 1: Data Collection Steps (parallel)
-const layer1Steps = [
+const layer1Steps: Step<any, any>[] = [
 	createStep({
 		id: 'analyst',
 		inputSchema: z.object({ symbol: z.string() }),
@@ -254,6 +255,17 @@ const layer1Steps = [
 		},
 	}),
 ];
+
+const testStep = createStep({
+	id: 'test-step',
+	inputSchema: z.object({ symbol: z.string() }),
+	outputSchema: z.object({ test: z.string() }),
+	execute: async ({ inputData }) => {
+		return { test: 'test' };
+	},
+});
+
+layer1Steps.push(testStep);
 
 // Layer 2: Reasoning Steps (parallel)
 const bullishReasoningStep = createStep({
