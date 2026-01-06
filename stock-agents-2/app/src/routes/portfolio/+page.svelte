@@ -41,21 +41,21 @@
 			</div>
 		{:else if accountQuery.current}
 			<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-				<div class="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
+				<div class="rounded-lg border border-zinc-700 bg-zinc-900/40 backdrop-blur-sm shadow-lg p-4">
 					<p class="text-sm text-gray-400">Portfolio Value</p>
 					<p class="text-2xl font-bold text-gray-100">{formatCurrency(accountQuery.current.account.portfolioValue)}</p>
 				</div>
-				<div class="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
+				<div class="rounded-lg border border-zinc-700 bg-zinc-900/40 backdrop-blur-sm shadow-lg p-4">
 					<p class="text-sm text-gray-400">Cash</p>
 					<p class="text-2xl font-bold text-gray-100">{formatCurrency(accountQuery.current.account.cash)}</p>
 				</div>
-				<div class="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
+				<div class="rounded-lg border border-zinc-700 bg-zinc-900/40 backdrop-blur-sm shadow-lg p-4">
 					<p class="text-sm text-gray-400">Buying Power</p>
 					<p class="text-2xl font-bold text-gray-100">{formatCurrency(accountQuery.current.account.buyingPower)}</p>
 				</div>
 				{#if accountQuery.current}
 					{@const change = getDayChange(accountQuery.current.account.equity, accountQuery.current.account.lastEquity)}
-					<div class="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
+					<div class="rounded-lg border border-zinc-700 bg-zinc-900/40 backdrop-blur-sm shadow-lg p-4">
 						<p class="text-sm text-gray-400">Day's Change</p>
 						<p class="text-2xl font-bold {change >= 0 ? 'text-green-400' : 'text-red-400'}">
 							{change >= 0 ? '+' : ''}{formatCurrency(change.toString())}
@@ -80,13 +80,13 @@
 				<p class="text-gray-400">No positions</p>
 				<a
 					href="/analyze"
-					class="mt-4 inline-block rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-blue-700"
+					class="mt-4 inline-block rounded-lg bg-teal-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-teal-700"
 				>
 					Analyze a stock
 				</a>
 			</div>
 		{:else}
-			<div class="overflow-x-auto rounded-lg border border-gray-700">
+			<div class="overflow-x-auto rounded-lg border border-zinc-700 bg-zinc-900/40 backdrop-blur-sm">
 				<table class="w-full">
 					<thead class="bg-gray-800/50">
 						<tr>
@@ -131,7 +131,7 @@
 				<p class="text-gray-400">No orders yet</p>
 			</div>
 		{:else}
-			<div class="overflow-x-auto rounded-lg border border-gray-700">
+			<div class="overflow-x-auto rounded-lg border border-zinc-700 bg-zinc-900/40 backdrop-blur-sm">
 				<table class="w-full">
 					<thead class="bg-gray-800/50">
 						<tr>

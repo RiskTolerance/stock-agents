@@ -13,7 +13,7 @@
 		<h1 class="text-3xl font-bold text-gray-100">Analysis Reports</h1>
 		<a
 			href="/analyze"
-			class="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-blue-700"
+			class="rounded-lg bg-teal-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-teal-700"
 		>
 			New Analysis
 		</a>
@@ -21,7 +21,7 @@
 
 	{#if reportsQuery.loading}
 		<div class="rounded-lg border border-gray-700 bg-gray-800/50 p-8 text-center">
-			<div class="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+			<div class="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-teal-500 border-t-transparent"></div>
 			<p class="text-gray-400">Loading reports...</p>
 		</div>
 	{:else if reportsQuery.error}
@@ -34,7 +34,7 @@
 			<p class="mb-4 text-gray-400">No reports yet</p>
 			<a
 				href="/analyze"
-				class="inline-block rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-blue-700"
+				class="inline-block rounded-lg bg-teal-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-teal-700"
 			>
 				Run your first analysis
 			</a>
@@ -44,7 +44,7 @@
 			{#each reportsQuery.current?.reports ?? [] as report}
 				<a
 					href="/reports/{report.id}"
-					class="block rounded-lg border border-gray-700 bg-gray-800/50 p-4 transition-colors hover:border-gray-600 hover:bg-gray-800"
+					class="block rounded-lg border border-zinc-700 bg-zinc-900/40 backdrop-blur-sm shadow-lg p-4 transition-colors hover:border-teal-400/50 hover:bg-zinc-800/60"
 				>
 					<div class="flex items-center justify-between">
 						<div>

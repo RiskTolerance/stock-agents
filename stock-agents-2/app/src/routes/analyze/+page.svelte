@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { analyzeStock } from './data.remote';
+	import { marked } from 'marked';
 
 	let symbol = $state('');
 	let isAnalyzing = $state(false);
@@ -21,141 +22,148 @@
 			isAnalyzing = false;
 		}
 	}
+
+	// Helper to get layer1 data with proper key mapping
+	function getLayer1Data(context: any) {
+		if (!context?.layer1Data) return {};
+		return context.layer1Data;
+	}
+
+	// Helper to render markdown synchronously
+	function renderMarkdown(text: string): string {
+		if (!text) return '';
+		try {
+			return marked.parse(text) as string;
+		} catch {
+			return text;
+		}
+	}
 </script>
 
 <svelte:head>
 	<title>Stock Analysis | Stock Agents</title>
 </svelte:head>
 
-<main class="container mx-auto max-w-4xl px-4 py-8">
-	<h1 class="mb-8 text-3xl font-bold text-gray-100">Stock Analysis</h1>
-
-	<form onsubmit={(e) => { e.preventDefault(); handleAnalyze(); }} class="mb-8">
-		<div class="flex gap-4">
-			<input
-				type="text"
-				bind:value={symbol}
-				placeholder="Enter stock symbol (e.g., AAPL)"
-				class="flex-1 rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-gray-100 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-				disabled={isAnalyzing}
-			/>
-			<button
-				type="submit"
-				disabled={isAnalyzing || !symbol.trim()}
-				class="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-			>
-				{isAnalyzing ? 'Analyzing...' : 'Analyze'}
-			</button>
-		</div>
-	</form>
+<div class="flex flex-col justify-start items-center gap-6 h-4/5 w-4/5 min-h-screen py-8">
+	<h1 class="text-white text-4xl font-bold">Generate Report</h1>
+	<p class="text-white text-lg">Enter a ticker symbol to generate a report.</p>
+	<div class="flex flex-col w-full items-center gap-4 max-w-md">
+		<input
+			bind:value={symbol}
+			type="text"
+			placeholder="Enter stock symbol (e.g., AAPL)"
+			class="w-full p-2 rounded-lg bg-white text-gray-900"
+			disabled={isAnalyzing}
+			onkeydown={(e) => e.key === 'Enter' && handleAnalyze()}
+		/>
+		<button
+			onclick={handleAnalyze}
+			disabled={isAnalyzing || !symbol.trim()}
+			class="bg-teal-300 px-4 py-2 rounded-lg w-40 text-gray-600 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-teal-400 transition-colors"
+		>
+			{isAnalyzing ? 'Analyzing...' : 'Generate Report'}
+		</button>
+	</div>
 
 	{#if isAnalyzing}
-		<div class="rounded-lg border border-gray-700 bg-gray-800/50 p-8 text-center">
-			<div class="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-			<p class="text-gray-400">Running analysis for {symbol.toUpperCase()}...</p>
-			<p class="mt-2 text-sm text-gray-500">This may take 30-60 seconds</p>
+		<div class="flex flex-col gap-4 bg-gray-50/10 w-full h-3/4 max-h-[3/4] rounded-md items-center justify-center">
+			<div></div>
+			<p class="text-green-400 text-lg col-span-2 text-center">Loading...</p>
+			<div></div>
 		</div>
-	{/if}
-
-	{#if error}
-		<div class="rounded-lg border border-red-500/50 bg-red-900/20 p-4 text-red-400">
-			<p class="font-semibold">Error</p>
-			<p>{error}</p>
+	{:else if error}
+		<div class="flex flex-col gap-4 bg-gray-50/10 w-full h-3/4 max-h-[3/4] rounded-md items-center justify-center">
+			<div></div>
+			<p class="text-red-400 text-lg col-span-2 text-center">Error: {error}</p>
+			<div></div>
 		</div>
-	{/if}
-
-	{#if result}
-		<div class="space-y-6">
-			<div class="rounded-lg border border-gray-700 bg-gray-800/50 p-6">
-				<div class="mb-4 flex items-center justify-between">
-					<h2 class="text-xl font-semibold text-gray-100">Analysis Result</h2>
-					<span class="rounded-full bg-green-500/20 px-3 py-1 text-sm text-green-400">
-						{result.symbol}
-					</span>
-				</div>
-
-				<div class="prose prose-invert max-w-none">
-					<h3 class="text-lg font-medium text-gray-200">Decision</h3>
-					<div class="whitespace-pre-wrap rounded-lg bg-gray-900/50 p-4 text-gray-300">
-						{result.decision}
+	{:else if result}
+		<div class="flex w-full justify-start">
+			<h2 class="text-white text-3xl font-bold">Report</h2>
+		</div>
+		<div class="flex flex-col gap-4 bg-gray-50/10 w-full h-3/4 max-h-[3/4] rounded-md">
+			{#snippet resultCard(title: string, text: string, colspan: number)}
+				{@const htmlContent = renderMarkdown(text)}
+				<div
+					style="grid-column: span {colspan} / span {colspan};"
+					class="result-card overflow-clip bg-gray-50 rounded-md w-full h-[200px]"
+				>
+					<div class="w-full h-full overflow-y-scroll p-4">
+						<h3 class="text-xl font-bold mb-2 text-gray-900">{title}</h3>
+						<div class="text-gray-700 prose prose-sm max-w-none">{@html htmlContent}</div>
 					</div>
 				</div>
+			{/snippet}
+
+			<div class="grid grid-cols-4 gap-4 p-6 overflow-y-scroll h-full py-12">
+				{@const layer1Data = getLayer1Data(result.context)}
+				{@const layer2Reasoning = result.context?.layer2Reasoning}
+				{@const layer3Rebuttals = result.context?.layer3Rebuttals}
+
+				<!-- Layer 1: Data Collection (10 cards, 1 column each) -->
+				{#if layer1Data.analyst}
+					{@render resultCard('Analyst', typeof layer1Data.analyst === 'string' ? layer1Data.analyst : JSON.stringify(layer1Data.analyst), 1)}
+				{/if}
+				{#if layer1Data.balance_sheet}
+					{@render resultCard('Balance Sheet', typeof layer1Data.balance_sheet === 'string' ? layer1Data.balance_sheet : JSON.stringify(layer1Data.balance_sheet), 1)}
+				{/if}
+				{#if layer1Data.balance_sheet_growth}
+					{@render resultCard('Balance Sheet Growth', typeof layer1Data.balance_sheet_growth === 'string' ? layer1Data.balance_sheet_growth : JSON.stringify(layer1Data.balance_sheet_growth), 1)}
+				{/if}
+				{#if layer1Data.cash_flow}
+					{@render resultCard('Cash Flow', typeof layer1Data.cash_flow === 'string' ? layer1Data.cash_flow : JSON.stringify(layer1Data.cash_flow), 1)}
+				{/if}
+				{#if layer1Data.cash_flow_growth}
+					{@render resultCard('Cash Flow Growth', typeof layer1Data.cash_flow_growth === 'string' ? layer1Data.cash_flow_growth : JSON.stringify(layer1Data.cash_flow_growth), 1)}
+				{/if}
+				{#if layer1Data.income_statement}
+					{@render resultCard('Income Statement', typeof layer1Data.income_statement === 'string' ? layer1Data.income_statement : JSON.stringify(layer1Data.income_statement), 1)}
+				{/if}
+				{#if layer1Data.insider}
+					{@render resultCard('Insider', typeof layer1Data.insider === 'string' ? layer1Data.insider : JSON.stringify(layer1Data.insider), 1)}
+				{/if}
+				{#if layer1Data.key_metrics}
+					{@render resultCard('Key Metrics', typeof layer1Data.key_metrics === 'string' ? layer1Data.key_metrics : JSON.stringify(layer1Data.key_metrics), 1)}
+				{/if}
+				{#if layer1Data.news}
+					{@render resultCard('News', typeof layer1Data.news === 'string' ? layer1Data.news : JSON.stringify(layer1Data.news), 1)}
+				{/if}
+				{#if layer1Data.technical}
+					{@render resultCard('Technical', typeof layer1Data.technical === 'string' ? layer1Data.technical : JSON.stringify(layer1Data.technical), 1)}
+				{/if}
+
+				<!-- Empty cells for spacing -->
+				<div></div>
+				<div></div>
+
+				<!-- Layer 2: Reasoning (2 cards, 2 columns each) -->
+				{#if layer2Reasoning?.bullish}
+					{@render resultCard('Bullish', typeof layer2Reasoning.bullish === 'string' ? layer2Reasoning.bullish : JSON.stringify(layer2Reasoning.bullish), 2)}
+				{/if}
+				{#if layer2Reasoning?.bearish}
+					{@render resultCard('Bearish', typeof layer2Reasoning.bearish === 'string' ? layer2Reasoning.bearish : JSON.stringify(layer2Reasoning.bearish), 2)}
+				{/if}
+
+				<!-- Layer 3: Rebuttals (2 cards, 2 columns each) -->
+				{#if layer3Rebuttals?.bullish}
+					{@render resultCard('Bullish Rebuttal', typeof layer3Rebuttals.bullish === 'string' ? layer3Rebuttals.bullish : JSON.stringify(layer3Rebuttals.bullish), 2)}
+				{/if}
+				{#if layer3Rebuttals?.bearish}
+					{@render resultCard('Bearish Rebuttal', typeof layer3Rebuttals.bearish === 'string' ? layer3Rebuttals.bearish : JSON.stringify(layer3Rebuttals.bearish), 2)}
+				{/if}
+
+				<!-- Layer 4: Decision (1 card, 4 columns) -->
+				{#if result.decision}
+					{@render resultCard('Decision', result.decision, 4)}
+				{/if}
 			</div>
-
-			{#if result.context?.layer1Data}
-				<details class="rounded-lg border border-gray-700 bg-gray-800/50">
-					<summary class="cursor-pointer p-4 font-medium text-gray-200 hover:bg-gray-700/30">
-						Layer 1: Data Collection
-					</summary>
-					<div class="border-t border-gray-700 p-4">
-						<div class="grid gap-4 md:grid-cols-2">
-							{#each Object.entries(result.context.layer1Data) as [key, value]}
-								<details class="rounded border border-gray-600 bg-gray-900/30">
-									<summary class="cursor-pointer p-2 text-sm font-medium capitalize text-gray-300 hover:bg-gray-700/20">
-										{key.replace(/_/g, ' ')}
-									</summary>
-									<div class="max-h-48 overflow-y-auto border-t border-gray-600 p-2 text-xs text-gray-400">
-										<pre class="whitespace-pre-wrap">{typeof value === 'string' ? value : JSON.stringify(value, null, 2)}</pre>
-									</div>
-								</details>
-							{/each}
-						</div>
-					</div>
-				</details>
-			{/if}
-
-			{#if result.context?.layer2Reasoning}
-				<details class="rounded-lg border border-gray-700 bg-gray-800/50">
-					<summary class="cursor-pointer p-4 font-medium text-gray-200 hover:bg-gray-700/30">
-						Layer 2: Reasoning
-					</summary>
-					<div class="border-t border-gray-700 p-4">
-						<div class="grid gap-4 md:grid-cols-2">
-							<div class="rounded border border-green-500/30 bg-green-900/10 p-4">
-								<h4 class="mb-2 font-medium text-green-400">Bullish Case</h4>
-								<p class="whitespace-pre-wrap text-sm text-gray-300">{result.context.layer2Reasoning.bullish}</p>
-							</div>
-							<div class="rounded border border-red-500/30 bg-red-900/10 p-4">
-								<h4 class="mb-2 font-medium text-red-400">Bearish Case</h4>
-								<p class="whitespace-pre-wrap text-sm text-gray-300">{result.context.layer2Reasoning.bearish}</p>
-							</div>
-						</div>
-					</div>
-				</details>
-			{/if}
-
-			{#if result.context?.layer3Rebuttals}
-				<details class="rounded-lg border border-gray-700 bg-gray-800/50">
-					<summary class="cursor-pointer p-4 font-medium text-gray-200 hover:bg-gray-700/30">
-						Layer 3: Rebuttals
-					</summary>
-					<div class="border-t border-gray-700 p-4">
-						<div class="grid gap-4 md:grid-cols-2">
-							<div class="rounded border border-green-500/30 bg-green-900/10 p-4">
-								<h4 class="mb-2 font-medium text-green-400">Bullish Rebuttal</h4>
-								<p class="whitespace-pre-wrap text-sm text-gray-300">{result.context.layer3Rebuttals.bullish}</p>
-							</div>
-							<div class="rounded border border-red-500/30 bg-red-900/10 p-4">
-								<h4 class="mb-2 font-medium text-red-400">Bearish Rebuttal</h4>
-								<p class="whitespace-pre-wrap text-sm text-gray-300">{result.context.layer3Rebuttals.bearish}</p>
-							</div>
-						</div>
-					</div>
-				</details>
-			{/if}
-
-			<p class="text-right text-sm text-gray-500">
-				Analyzed at {new Date(result.timestamp).toLocaleString()}
-			</p>
 		</div>
 	{/if}
-</main>
+</div>
 
 <style>
-	/* Dark theme base */
 	:global(body) {
-		background-color: #0f172a;
+		background: linear-gradient(to bottom, rgb(39 39 42), rgb(24 24 27));
 		color: #e2e8f0;
 	}
 </style>
-
