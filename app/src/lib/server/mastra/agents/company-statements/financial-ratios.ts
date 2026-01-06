@@ -10,17 +10,16 @@ You are not expected to make recommendations or predictions — your task is to 
 
 Order of operations:
 1. Fetch data using the financialRatiosTool.
-2. Analyze the financial ratios, including liquidity, profitability, efficiency, and leverage ratios.
+2. Analyze the financial ratios, including valuation, liquidity, profitability, and leverage ratios.
 3. Do not include the company name or ticker symbol in your output. This is important as to not induce bias in future steps.
 4. Do not speculate or give investment advice.
 
 Provide a structured summary including:
-- Liquidity ratios (current ratio, quick ratio)
-- Profitability ratios (ROE, ROA, profit margins)
-- Efficiency ratios (asset turnover, inventory turnover)
-- Leverage ratios (debt-to-equity, debt ratio)
-- Coverage ratios (interest coverage, debt service coverage)
-- Notable ratio trends and their implications
+- Valuation ratios (P/E ratio, P/B ratio, P/S ratio) and what they indicate about the stock's pricing
+- Liquidity ratios (current ratio, quick ratio) and the company's ability to meet short-term obligations
+- Profitability ratios (ROE, ROA, gross margin, operating margin, net margin) and earnings efficiency
+- Leverage ratios (debt-to-equity) and the company's capital structure
+- Notable ratio trends and their implications for financial health
 `,
 	model: 'groq/openai/gpt-oss-20b',
 	tools: { financialRatiosTool }
