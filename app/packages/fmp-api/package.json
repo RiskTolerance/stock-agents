@@ -1,0 +1,28 @@
+{
+  "name": "fmp-api",
+  "version": "1.0.13",
+  "description": "A WIP TypeScript SDK for the Financial Modeling Prep API.",
+  "type": "module",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RiskTolerance/financial-modeling-prep-api.git"
+  },
+  "scripts": {
+    "build": "tsc && find dist -name '*.test.js' -delete && find dist -name '*.test.d.ts' -delete",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.19"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "vitest": "^3.2.4"
+  }
+}

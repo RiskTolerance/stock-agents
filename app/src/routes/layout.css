@@ -1,0 +1,8 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+:global(body) {
+	background: linear-gradient(to bottom, rgb(39 39 42), rgb(24 24 27));
+	color: #e2e8f0;
+}
