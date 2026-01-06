@@ -1,6 +1,7 @@
 <script lang="ts">
 	import './layout.css';
 	import Navigation from '$lib/components/ui/Navigation.svelte';
+	import { page } from '$app/stores';
 
 	let { children } = $props();
 </script>
@@ -15,7 +16,7 @@
 			<a href="/" class="text-xl font-bold text-white hover:text-teal-400 transition-colors">
 				Stock Agents
 			</a>
-			<Navigation />
+			<Navigation currentPath={$page.url.pathname} />
 		</div>
 	</nav>
 

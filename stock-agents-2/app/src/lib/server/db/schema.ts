@@ -6,7 +6,8 @@ import {
 	jsonb,
 	integer,
 	decimal,
-	unique
+	unique,
+	index
 } from 'drizzle-orm/pg-core';
 
 // ============================================================================
@@ -129,12 +130,39 @@ export const agentSessions = pgTable('agent_sessions', {
 	endedAt: timestamp('ended_at', { withTimezone: true }),
 	status: text('status').default('running'), // 'running', 'completed', 'failed'
 	trigger: text('trigger').notNull(), // 'heartbeat', 'manual', 'api'
-	toolCalls: jsonb('tool_calls'), // Array of {tool, input, output, timestamp}
+	toolCalls: jsonb('tool_calls'), // Array of {tool, input, output, timestamp} (kept for backward compatibility)
 	decisionsMade: jsonb('decisions_made'), // Array of {symbol, decision, confidence}
 	actionsTaken: jsonb('actions_taken'), // Array of {type, symbol, details}
-	fullReasoning: text('full_reasoning'), // Agent's complete output text
+	fullReasoning: text('full_reasoning'), // Agent's complete output text (kept for backward compatibility)
+	conversationHistory: jsonb('conversation_history'), // Array of {role: 'user' | 'assistant', content: string}
+	initialContext: jsonb('initial_context'), // Snapshot of initial state (portfolio, market status, idle time, etc.)
+	finalContext: jsonb('final_context'), // Snapshot of final state
 	error: text('error')
 });
+
+// ============================================================================
+// Agent Session Iterations (for per-iteration tracking)
+// ============================================================================
+
+export const agentSessionIterations = pgTable(
+	'agent_session_iterations',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		sessionId: uuid('session_id')
+			.references(() => agentSessions.id, { onDelete: 'cascade' })
+			.notNull(),
+		iteration: integer('iteration').notNull(),
+		reasoning: text('reasoning').notNull(), // Agent's text response for this iteration
+		toolCalls: jsonb('tool_calls'), // Array of {tool: string, input: unknown, output: unknown, timestamp: string, success: boolean, error?: string}
+		context: jsonb('context'), // State snapshot (portfolio summary, market status, analyzed symbols, etc.)
+		decisionsConsidered: jsonb('decisions_considered'), // Array of {action: string, symbol?: string, reasoning: string, decided: boolean, reasonNotExecuted?: string}
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow()
+	},
+	(table) => [
+		index('session_id_idx').on(table.sessionId),
+		index('session_iteration_idx').on(table.sessionId, table.iteration)
+	]
+);
 
 // ============================================================================
 // Type exports for use in app
@@ -166,3 +194,6 @@ export type NewAgentActivity = typeof agentActivity.$inferInsert;
 
 export type AgentSession = typeof agentSessions.$inferSelect;
 export type NewAgentSession = typeof agentSessions.$inferInsert;
+
+export type AgentSessionIteration = typeof agentSessionIterations.$inferSelect;
+export type NewAgentSessionIteration = typeof agentSessionIterations.$inferInsert;

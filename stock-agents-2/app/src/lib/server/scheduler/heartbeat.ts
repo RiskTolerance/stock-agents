@@ -1,9 +1,9 @@
 import { mastra } from '../mastra/index.js';
 import { getLastAgentActivity, logActivity } from '../mastra/tools/activity-tools.js';
-import { getMarketStatusTool } from '../mastra/tools/account-manager-tools.js';
+import { getMarketStatusTool, getPortfolioSummaryTool } from '../mastra/tools/account-manager-tools.js';
 import { env } from '$env/dynamic/private';
 import { db } from '../db/index.js';
-import { agentSessions } from '../db/schema.js';
+import { agentSessions, agentSessionIterations } from '../db/schema.js';
 import { eq } from 'drizzle-orm';
 import {
 	logSessionStart,
@@ -127,6 +127,34 @@ Use your tools to assess the situation and take appropriate action. Be strategic
 		marketStatus: marketStatus.message
 	});
 
+	// Capture initial context
+	const initialContext = {
+		idleMinutes,
+		marketStatus: {
+			isMarketHours: marketStatus.isMarketHours,
+			message: marketStatus.message,
+			timeUntilOpen: marketStatus.timeUntilOpen,
+			timeUntilClose: marketStatus.timeUntilClose
+		},
+		lastActivity: lastActivity
+			? {
+					activityType: lastActivity.activityType,
+					symbol: lastActivity.symbol,
+					createdAt: lastActivity.createdAt?.toISOString()
+				}
+			: null,
+		timestamp: now.toISOString()
+	};
+
+	// Get initial portfolio summary for context
+	let initialPortfolioSummary: unknown = null;
+	try {
+		initialPortfolioSummary = await getPortfolioSummaryTool.execute({ context: {} });
+		initialContext.portfolioSummary = initialPortfolioSummary;
+	} catch (error) {
+		console.warn('[Heartbeat] Failed to get initial portfolio summary:', error);
+	}
+
 	// Track session data
 	const toolCalls: ToolCall[] = [];
 	const decisions: Decision[] = [];
@@ -134,6 +162,26 @@ Use your tools to assess the situation and take appropriate action. Be strategic
 	const conversationHistory: Array<{ role: 'user' | 'assistant'; content: string }> = [
 		{ role: 'user', content: wakeUpPrompt }
 	];
+	const iterations: Array<{
+		iteration: number;
+		reasoning: string;
+		toolCalls: Array<{
+			tool: string;
+			input: unknown;
+			output: unknown;
+			timestamp: string;
+			success: boolean;
+			error?: string;
+		}>;
+		context: Record<string, unknown>;
+		decisionsConsidered: Array<{
+			action: string;
+			symbol?: string;
+			reasoning: string;
+			decided: boolean;
+			reasonNotExecuted?: string;
+		}>;
+	}> = [];
 
 	let fullReasoning = '';
 	let sessionError: string | undefined;
@@ -141,6 +189,7 @@ Use your tools to assess the situation and take appropriate action. Be strategic
 	let iteration = 0;
 	const analyzedSymbols = new Set<string>(); // Track analyzed stocks to prevent re-analysis
 	let tradeExecuted = false; // Track if we've executed a trade this session
+	let finalContext: Record<string, unknown> = {}; // Initialize for error handling
 
 	try {
 		// Execution loop - continue until agent indicates completion or max iterations
@@ -152,6 +201,42 @@ Use your tools to assess the situation and take appropriate action. Be strategic
 
 			// Track full reasoning
 			fullReasoning += result.text + '\n\n';
+
+			// Capture iteration data
+			const iterationToolCalls: Array<{
+				tool: string;
+				input: unknown;
+				output: unknown;
+				timestamp: string;
+				success: boolean;
+				error?: string;
+			}> = [];
+			const decisionsConsidered: Array<{
+				action: string;
+				symbol?: string;
+				reasoning: string;
+				decided: boolean;
+				reasonNotExecuted?: string;
+			}> = [];
+
+			// Get current context snapshot
+			let currentPortfolioSummary: unknown = null;
+			try {
+				currentPortfolioSummary = await getPortfolioSummaryTool.execute({ context: {} });
+			} catch (error) {
+				console.warn(`[Heartbeat] Failed to get portfolio summary for iteration ${iteration}:`, error);
+			}
+
+			const iterationContext = {
+				portfolioSummary: currentPortfolioSummary,
+				marketStatus: {
+					isMarketHours: marketStatus.isMarketHours,
+					message: marketStatus.message
+				},
+				analyzedSymbols: Array.from(analyzedSymbols),
+				tradeExecuted,
+				iteration
+			};
 
 			// Track tool calls and their results
 			if (result.toolCalls && result.toolCalls.length > 0) {
@@ -167,9 +252,31 @@ Use your tools to assess the situation and take appropriate action. Be strategic
 						'unknown';
 					const args = (payload.args || (toolCall as any).args || {}) as Record<string, unknown>;
 
+					// Try to extract tool result - Mastra may include result in toolCall or we need to check conversation history
+					let toolOutput: unknown = undefined;
+					let toolSuccess = true;
+					let toolError: string | undefined = undefined;
+
+					// Check if toolCall has a result property (some Mastra versions include this)
+					if ((toolCall as any).result !== undefined) {
+						toolOutput = (toolCall as any).result;
+					} else if ((payload as any).result !== undefined) {
+						toolOutput = (payload as any).result;
+					}
+
 					// Log tool call
-					const toolCallObj = logToolCall(toolName, args, undefined);
+					const toolCallObj = logToolCall(toolName, args, toolOutput);
 					toolCalls.push(toolCallObj);
+
+					// Add to iteration tool calls
+					iterationToolCalls.push({
+						tool: toolName,
+						input: args,
+						output: toolOutput,
+						timestamp: new Date().toISOString(),
+						success: toolSuccess,
+						error: toolError
+					});
 
 					// Track analysis tool calls (by args, since results aren't in this structure)
 					if (toolName === 'triggerAnalysisTool' || toolName === 'trigger-stock-analysis') {
@@ -177,11 +284,24 @@ Use your tools to assess the situation and take appropriate action. Be strategic
 						if (symbol) {
 							if (analyzedSymbols.has(symbol)) {
 								console.log(`[Heartbeat] Skipping duplicate analysis for ${symbol}`);
+								decisionsConsidered.push({
+									action: 'analyze',
+									symbol,
+									reasoning: `Considered analyzing ${symbol} but skipped due to recent analysis`,
+									decided: false,
+									reasonNotExecuted: 'Already analyzed recently'
+								});
 							} else {
 								analyzedSymbols.add(symbol);
 								const actionObj = logAction('analyze', symbol, { triggered: true });
 								actions.push(actionObj);
 								console.log(`[Heartbeat] Analysis triggered for ${symbol}`);
+								decisionsConsidered.push({
+									action: 'analyze',
+									symbol,
+									reasoning: `Decided to analyze ${symbol}`,
+									decided: true
+								});
 							}
 						}
 					}
@@ -199,6 +319,12 @@ Use your tools to assess the situation and take appropriate action. Be strategic
 							const decisionObj = logDecision(symbol, side.toUpperCase());
 							decisions.push(decisionObj);
 							console.log(`[Heartbeat] ✓ Trade executed: ${side.toUpperCase()} ${qty} ${symbol}`);
+							decisionsConsidered.push({
+								action: 'trade',
+								symbol,
+								reasoning: `Executed ${side.toUpperCase()} order for ${qty} shares of ${symbol}`,
+								decided: true
+							});
 						}
 					}
 
@@ -209,9 +335,44 @@ Use your tools to assess the situation and take appropriate action. Be strategic
 							const actionObj = logAction('monitor');
 							actions.push(actionObj);
 						}
+						decisionsConsidered.push({
+							action: 'monitor',
+							reasoning: 'Checked portfolio status',
+							decided: true
+						});
 					}
 				}
 			}
+
+			// Track decisions considered but not executed based on agent reasoning
+			const lowerText = result.text.toLowerCase();
+			if (lowerText.includes('wait') || lowerText.includes('no action') || lowerText.includes('not taking')) {
+				decisionsConsidered.push({
+					action: 'wait',
+					reasoning: result.text.substring(0, 200),
+					decided: false,
+					reasonNotExecuted: 'Agent decided to wait or not take action'
+				});
+			}
+
+			// Save iteration to database
+			await db.insert(agentSessionIterations).values({
+				sessionId,
+				iteration,
+				reasoning: result.text,
+				toolCalls: iterationToolCalls as unknown as Record<string, unknown>,
+				context: iterationContext as unknown as Record<string, unknown>,
+				decisionsConsidered: decisionsConsidered as unknown as Record<string, unknown>
+			});
+
+			// Store iteration data locally
+			iterations.push({
+				iteration,
+				reasoning: result.text,
+				toolCalls: iterationToolCalls,
+				context: iterationContext,
+				decisionsConsidered
+			});
 
 			// Add assistant response to conversation
 			conversationHistory.push({ role: 'assistant', content: result.text });
@@ -222,8 +383,7 @@ Use your tools to assess the situation and take appropriate action. Be strategic
 				break;
 			}
 
-			// Check if agent indicates completion
-			const lowerText = result.text.toLowerCase();
+			// Check if agent indicates completion (reuse lowerText from above)
 			const indicatesDone =
 				lowerText.includes('completed') ||
 				lowerText.includes('finished') ||
@@ -246,6 +406,26 @@ Use your tools to assess the situation and take appropriate action. Be strategic
 			}
 		}
 		
+		// Capture final context
+		let finalPortfolioSummary: unknown = null;
+		try {
+			finalPortfolioSummary = await getPortfolioSummaryTool.execute({ context: {} });
+		} catch (error) {
+			console.warn('[Heartbeat] Failed to get final portfolio summary:', error);
+		}
+
+		finalContext = {
+			portfolioSummary: finalPortfolioSummary,
+			marketStatus: {
+				isMarketHours: marketStatus.isMarketHours,
+				message: marketStatus.message
+			},
+			analyzedSymbols: Array.from(analyzedSymbols),
+			tradeExecuted,
+			totalIterations: iteration,
+			timestamp: new Date().toISOString()
+		};
+
 		// Log final summary
 		console.log(`[Heartbeat] === Session Summary ===`);
 		console.log(`[Heartbeat] Iterations: ${iteration}`);
@@ -263,7 +443,10 @@ Use your tools to assess the situation and take appropriate action. Be strategic
 				toolCalls: toolCalls as unknown as Record<string, unknown>,
 				decisionsMade: decisions as unknown as Record<string, unknown>,
 				actionsTaken: actions as unknown as Record<string, unknown>,
-				fullReasoning: fullReasoning.trim()
+				fullReasoning: fullReasoning.trim(),
+				conversationHistory: conversationHistory as unknown as Record<string, unknown>,
+				initialContext: initialContext as unknown as Record<string, unknown>,
+				finalContext: finalContext as unknown as Record<string, unknown>
 			})
 			.where(eq(agentSessions.id, sessionId));
 
@@ -294,6 +477,9 @@ Use your tools to assess the situation and take appropriate action. Be strategic
 				decisionsMade: decisions as unknown as Record<string, unknown>,
 				actionsTaken: actions as unknown as Record<string, unknown>,
 				fullReasoning: fullReasoning.trim(),
+				conversationHistory: conversationHistory as unknown as Record<string, unknown>,
+				initialContext: initialContext as unknown as Record<string, unknown>,
+				finalContext: finalContext as unknown as Record<string, unknown>,
 				error: sessionError
 			})
 			.where(eq(agentSessions.id, sessionId));

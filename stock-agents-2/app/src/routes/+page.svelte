@@ -2,6 +2,8 @@
 	import { AreaChart, Axis, Spline, Svg, Tooltip, Highlight } from 'layerchart';
 	import dayjs from 'dayjs';
 	import { getChartData } from './data.remote';
+	import { analyzeStock } from './analyze/data.remote';
+	import ReportDisplay from '$lib/components/ReportDisplay.svelte';
 
 	let { data } = $props();
 
@@ -10,6 +12,11 @@
 	let chartType = $state<'line' | 'candlestick' | 'bar'>('line');
 	let dateRange = $state<'1d' | '7d' | '1m' | '3m' | '1y'>('3m');
 	let isLoading = $state(false);
+	
+	// Analysis state
+	let isAnalyzing = $state(false);
+	let result = $state<Awaited<ReturnType<typeof analyzeStock>> | null>(null);
+	let error = $state<string | null>(null);
 
 	// Initialize stockData from server data
 	$effect(() => {
@@ -84,6 +91,28 @@
 		// Chart type switching would require different chart components
 		// For now, we'll just use AreaChart
 	};
+
+	// Computed values for result data
+	const layer1Data = $derived(result?.context?.layer1Data || {});
+	const layer2Reasoning = $derived(result?.context?.layer2Reasoning);
+	const layer3Rebuttals = $derived(result?.context?.layer3Rebuttals);
+	const decision = $derived(result?.decision || null);
+
+	async function handleAnalyze() {
+		if (!symbol.trim()) return;
+
+		isAnalyzing = true;
+		error = null;
+		result = null;
+
+		try {
+			result = await analyzeStock({ symbol: symbol.toUpperCase() });
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Analysis failed';
+		} finally {
+			isAnalyzing = false;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -251,6 +280,54 @@
 						<div class="flex flex-col items-center justify-center h-full text-gray-400 gap-2">
 							<div>No chart data available</div>
 							<div class="text-xs">Data: {JSON.stringify({ hasData: !!data.priceChart, dataLength: data.priceChart?.length || 0 })}</div>
+						</div>
+					{/if}
+				</div>
+			</div>
+			
+			<!-- Analysis Section -->
+			<div class="mt-8 pt-8 border-t border-teal-400/20">
+				<h2 class="text-white text-2xl font-bold mb-4">Stock Analysis</h2>
+				<div class="flex flex-col gap-4">
+					<div class="flex gap-3 items-end">
+						<div class="flex flex-col gap-1">
+							<label class="text-sm text-white font-medium" for="analysis-symbol">Analyze Symbol</label>
+							<input
+								id="analysis-symbol"
+								bind:value={symbol}
+								type="text"
+								placeholder="Enter stock symbol (e.g., AAPL)"
+								class="w-48 h-10 bg-white rounded-md p-2 text-gray-900"
+								disabled={isAnalyzing}
+								onkeydown={(e) => e.key === 'Enter' && handleAnalyze()}
+							/>
+						</div>
+						<button
+							onclick={handleAnalyze}
+							disabled={isAnalyzing || !symbol.trim()}
+							class="bg-teal-400 hover:bg-teal-500 text-gray-900 hover:text-white px-6 py-2 rounded-md h-10 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+						>
+							{isAnalyzing ? 'Analyzing...' : 'Generate Report'}
+						</button>
+					</div>
+
+					{#if isAnalyzing}
+						<div class="flex flex-col gap-4 bg-gray-50/10 w-full rounded-md items-center justify-center p-8 min-h-[200px]">
+							<div class="text-teal-400 text-lg">Analyzing {symbol.toUpperCase()}...</div>
+						</div>
+					{:else if error}
+						<div class="flex flex-col gap-4 bg-gray-50/10 w-full rounded-md items-center justify-center p-8 min-h-[200px]">
+							<p class="text-red-400 text-lg">Error: {error}</p>
+						</div>
+					{:else if result}
+						<div class="w-full">
+							<h3 class="text-white text-xl font-bold mb-4">Analysis Report</h3>
+							<ReportDisplay
+								{layer1Data}
+								{layer2Reasoning}
+								{layer3Rebuttals}
+								{decision}
+							/>
 						</div>
 					{/if}
 				</div>

@@ -44,6 +44,28 @@ export const triggerAnalysisTool = createTool({
 		const { symbol } = context;
 		const symbolUpper = symbol.toUpperCase();
 
+		// Check for recent analysis to prevent duplicates (within last hour)
+		const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+		const recentAnalysis = await db
+			.select()
+			.from(reports)
+			.where(eq(reports.symbol, symbolUpper))
+			.orderBy(desc(reports.createdAt))
+			.limit(1);
+
+		if (
+			recentAnalysis.length > 0 &&
+			recentAnalysis[0].createdAt &&
+			recentAnalysis[0].createdAt > oneHourAgo
+		) {
+			const timeSince = Math.round(
+				(Date.now() - recentAnalysis[0].createdAt.getTime()) / 1000 / 60
+			);
+			throw new Error(
+				`Symbol ${symbolUpper} was analyzed ${timeSince} minutes ago. Please wait at least 1 hour before re-analyzing the same symbol.`
+			);
+		}
+
 		// Use throttle to prevent concurrent analyses and retry logic for rate limits
 		return await analysisThrottle.execute(async () => {
 			return await retryOnRateLimit(

@@ -79,7 +79,7 @@
 			<div class="rounded-lg border border-gray-700 bg-gray-800/50 p-8 text-center">
 				<p class="text-gray-400">No positions</p>
 				<a
-					href="/analyze"
+					href="/"
 					class="mt-4 inline-block rounded-lg bg-teal-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-teal-700"
 				>
 					Analyze a stock

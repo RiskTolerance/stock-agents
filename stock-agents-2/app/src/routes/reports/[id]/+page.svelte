@@ -1,11 +1,18 @@
 <script lang="ts">
 	import { getReport } from '../data.remote';
+	import ReportDisplay from '$lib/components/ReportDisplay.svelte';
 
 	let { params } = $props();
 
 	// Only call getReport if id is available and valid (UUID format)
 	const hasValidId = $derived(params.id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.id));
 	const reportQuery = $derived(hasValidId ? getReport({ id: params.id }) : null);
+
+	// Extract report data for component props
+	const layer1Data = $derived(reportQuery.current?.report?.context?.layer1Data || {});
+	const layer2Reasoning = $derived(reportQuery.current?.report?.context?.layer2Reasoning || null);
+	const layer3Rebuttals = $derived(reportQuery.current?.report?.context?.layer3Rebuttals || null);
+	const decision = $derived(reportQuery.current?.report?.decision || null);
 </script>
 
 <svelte:head>
@@ -39,32 +46,18 @@
 	{:else}
 		{@const report = reportQuery.current.report}
 		<div class="space-y-6">
-			<div class="rounded-lg border border-gray-700 bg-gray-800/50 p-6">
-				<div class="mb-4 flex items-center justify-between">
-					<h1 class="text-2xl font-bold text-gray-100">{report.symbol} Analysis</h1>
-					<span class="text-sm text-gray-400">
-						{new Date(report.createdAt).toLocaleString()}
-					</span>
-				</div>
-
-				<div class="prose prose-invert max-w-none">
-					<h2 class="text-lg font-medium text-gray-200">Decision</h2>
-					<div class="whitespace-pre-wrap rounded-lg bg-gray-900/50 p-4 text-gray-300">
-						{report.decision}
-					</div>
-				</div>
+			<div class="mb-4 flex items-center justify-between">
+				<h1 class="text-2xl font-bold text-gray-100">{report.symbol} Analysis</h1>
+				<span class="text-sm text-gray-400">
+					{new Date(report.createdAt).toLocaleString()}
+				</span>
 			</div>
-
-			{#if report.context}
-				<details class="rounded-lg border border-gray-700 bg-gray-800/50" open>
-					<summary class="cursor-pointer p-4 font-medium text-gray-200 hover:bg-gray-700/30">
-						Full Analysis Context
-					</summary>
-					<div class="border-t border-gray-700 p-4">
-						<pre class="overflow-x-auto rounded bg-gray-900/50 p-4 text-xs text-gray-400">{JSON.stringify(report.context, null, 2)}</pre>
-					</div>
-				</details>
-			{/if}
+			<ReportDisplay
+				{layer1Data}
+				{layer2Reasoning}
+				{layer3Rebuttals}
+				{decision}
+			/>
 		</div>
 	{/if}
 </main>
