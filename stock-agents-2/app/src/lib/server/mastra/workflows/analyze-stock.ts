@@ -1,6 +1,35 @@
 import { createWorkflow, createStep } from '@mastra/core/workflows';
 import { z } from 'zod';
 
+/**
+ * Sleep utility for adding delays between batches
+ */
+function sleep(ms: number): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Truncate string data to reduce token usage
+ * Keeps first N characters and adds truncation indicator
+ */
+function truncateData(data: unknown, maxChars: number = 2000): unknown {
+	if (typeof data === 'string') {
+		if (data.length <= maxChars) return data;
+		return data.substring(0, maxChars) + '...[truncated]';
+	}
+	if (typeof data === 'object' && data !== null) {
+		if (Array.isArray(data)) {
+			return data.map((item) => truncateData(item, maxChars));
+		}
+		const truncated: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(data)) {
+			truncated[key] = truncateData(value, maxChars);
+		}
+		return truncated;
+	}
+	return data;
+}
+
 // ============================================================================
 // Schema Definitions
 // ============================================================================
@@ -97,12 +126,15 @@ const combineBatch1Step = createStep({
 	}
 });
 
-// Pass symbol through for batch 2
+// Pass symbol through for batch 2 with delay to avoid rate limits
 const passSymbolForBatch2Step = createStep({
 	id: 'pass-symbol-batch2',
 	inputSchema: z.object({ batch1: z.any() }),
 	outputSchema: z.object({ symbol: z.string() }),
 	execute: async ({ getInitData }) => {
+		// Add delay between batches to avoid rate limits
+		// Groq has TPM limits, so we wait a bit between batches
+		await sleep(2000); // 2 second delay between batch 1 and batch 2
 		const { symbol } = getInitData();
 		return { symbol };
 	}
@@ -132,12 +164,14 @@ const combineBatch2Step = createStep({
 	}
 });
 
-// Pass symbol through for batch 3
+// Pass symbol through for batch 3 with delay to avoid rate limits
 const passSymbolForBatch3Step = createStep({
 	id: 'pass-symbol-batch3',
 	inputSchema: z.object({ batch2: z.any() }),
 	outputSchema: z.object({ symbol: z.string() }),
 	execute: async ({ getInitData }) => {
+		// Add delay between batches to avoid rate limits
+		await sleep(2000); // 2 second delay between batch 2 and batch 3
 		const { symbol } = getInitData();
 		return { symbol };
 	}
@@ -205,10 +239,13 @@ const bullishReasoningStep = createStep({
 		const { layer1Data } = inputData;
 		const bullishAgent = mastra.getAgent('bullishAgent');
 
+		// Truncate layer1Data to reduce token usage (keep summaries concise)
+		const truncatedLayer1Data = truncateData(layer1Data, 2000); // ~500 tokens per agent summary
+
 		const result = await bullishAgent.generate([
 			{
 				role: 'user',
-				content: `Given the following context, argue the bull case for this stock information:\n${JSON.stringify(layer1Data)}`
+				content: `Given the following context, argue the bull case for this stock information. Keep your response concise (under 300 words):\n${JSON.stringify(truncatedLayer1Data)}`
 			}
 		]);
 
@@ -224,10 +261,13 @@ const bearishReasoningStep = createStep({
 		const { layer1Data } = inputData;
 		const bearishAgent = mastra.getAgent('bearishAgent');
 
+		// Truncate layer1Data to reduce token usage (keep summaries concise)
+		const truncatedLayer1Data = truncateData(layer1Data, 2000); // ~500 tokens per agent summary
+
 		const result = await bearishAgent.generate([
 			{
 				role: 'user',
-				content: `Given the following context, argue the bear case for this stock information:\n${JSON.stringify(layer1Data)}`
+				content: `Given the following context, argue the bear case for this stock information. Keep your response concise (under 300 words):\n${JSON.stringify(truncatedLayer1Data)}`
 			}
 		]);
 
@@ -275,10 +315,13 @@ const bullishRebuttalStep = createStep({
 		const { context } = inputData;
 		const bullishRebuttalAgent = mastra.getAgent('bullishRebuttalAgent');
 
+		// Truncate context to reduce token usage
+		const truncatedContext = truncateData(context, 3000); // Layer 1 + Layer 2 summaries
+
 		const result = await bullishRebuttalAgent.generate([
 			{
 				role: 'user',
-				content: `Given the following context, rebut the bear case:\n${JSON.stringify(context)}`
+				content: `Given the following context, rebut the bear case. Keep your response concise (under 200 words):\n${JSON.stringify(truncatedContext)}`
 			}
 		]);
 
@@ -294,10 +337,13 @@ const bearishRebuttalStep = createStep({
 		const { context } = inputData;
 		const bearishRebuttalAgent = mastra.getAgent('bearishRebuttalAgent');
 
+		// Truncate context to reduce token usage
+		const truncatedContext = truncateData(context, 3000); // Layer 1 + Layer 2 summaries
+
 		const result = await bearishRebuttalAgent.generate([
 			{
 				role: 'user',
-				content: `Given the following context, rebut the bull case:\n${JSON.stringify(context)}`
+				content: `Given the following context, rebut the bull case. Keep your response concise (under 200 words):\n${JSON.stringify(truncatedContext)}`
 			}
 		]);
 
@@ -370,10 +416,13 @@ const decisionStep = createStep({
 		const { context } = inputData;
 		const decisionAgent = mastra.getAgent('decisionAgent');
 
+		// Truncate context to reduce token usage (Layer 1 + Layer 2 + Layer 3)
+		const truncatedContext = truncateData(context, 4000); // All layers combined
+
 		const result = await decisionAgent.generate([
 			{
 				role: 'user',
-				content: `Given the following context, make a final trading decision (BUY, SELL, HOLD) for ${context.symbol}:\n${JSON.stringify(context)}`
+				content: `Given the following context, make a final trading decision (BUY, SELL, HOLD) for ${context.symbol}. Keep your response concise (under 150 words):\n${JSON.stringify(truncatedContext)}`
 			}
 		]);
 

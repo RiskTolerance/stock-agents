@@ -108,6 +108,35 @@ export const jobQueue = pgTable('job_queue', {
 });
 
 // ============================================================================
+// Agent Activity Tracking
+// ============================================================================
+
+export const agentActivity = pgTable('agent_activity', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	activityType: text('activity_type').notNull(), // 'monitor', 'analyze', 'trade', 'wake_up'
+	symbol: text('symbol'), // optional, for stock-specific activities
+	details: jsonb('details'),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow()
+});
+
+// ============================================================================
+// Agent Sessions (for tracking complete agent runs)
+// ============================================================================
+
+export const agentSessions = pgTable('agent_sessions', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	startedAt: timestamp('started_at', { withTimezone: true }).defaultNow(),
+	endedAt: timestamp('ended_at', { withTimezone: true }),
+	status: text('status').default('running'), // 'running', 'completed', 'failed'
+	trigger: text('trigger').notNull(), // 'heartbeat', 'manual', 'api'
+	toolCalls: jsonb('tool_calls'), // Array of {tool, input, output, timestamp}
+	decisionsMade: jsonb('decisions_made'), // Array of {symbol, decision, confidence}
+	actionsTaken: jsonb('actions_taken'), // Array of {type, symbol, details}
+	fullReasoning: text('full_reasoning'), // Agent's complete output text
+	error: text('error')
+});
+
+// ============================================================================
 // Type exports for use in app
 // ============================================================================
 
@@ -131,3 +160,9 @@ export type NewTradeHistoryRecord = typeof tradeHistory.$inferInsert;
 
 export type Job = typeof jobQueue.$inferSelect;
 export type NewJob = typeof jobQueue.$inferInsert;
+
+export type AgentActivity = typeof agentActivity.$inferSelect;
+export type NewAgentActivity = typeof agentActivity.$inferInsert;
+
+export type AgentSession = typeof agentSessions.$inferSelect;
+export type NewAgentSession = typeof agentSessions.$inferInsert;

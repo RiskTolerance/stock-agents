@@ -2,6 +2,23 @@ import { createTool } from '@mastra/core/tools';
 import { createFmpApi } from '../../../../../packages/fmp-api/src/index.js';
 import { z } from 'zod';
 import { env } from '$env/dynamic/private';
+import {
+	reduceIncomeStatement,
+	reduceBalanceSheet,
+	reduceCashFlow,
+	reduceFinancialRatios,
+	reduceKeyMetrics,
+	reduceGrowthData,
+	reduceAnalystEstimates,
+	reduceAnalystRatings,
+	reducePriceTargets,
+	reduceCompanyProfile,
+	reduceQuote,
+	reduceNews,
+	reduceInsiderTrading,
+	reduceTechnicalIndicators,
+	reduceFinancialScores
+} from '../utils/data-reduction.js';
 
 // ============================================================================
 // FMP API Client
@@ -42,48 +59,26 @@ export const analystDataTool = createTool({
 		symbol: z.string().describe('Stock ticker symbol (e.g., AAPL)')
 	}),
 	outputSchema: z.object({
-		financialEstimates: z.any(),
-		ratingSnapshot: z.any(),
-		historicalRatings: z.any(),
-		analystPriceTarget: z.any(),
-		analystPriceTargetConsensus: z.any(),
-		stockGradesConsensus: z.any(),
-		stockGradeChanges: z.any(),
-		stockGradeHistory: z.any()
+		estimates: z.any(),
+		ratings: z.any(),
+		priceTarget: z.any()
 	}),
 	execute: async ({ context }) => {
 		const fmpApi = getFmpApi();
 		const symbol = context.symbol;
 
-		const [
-			financialEstimates,
-			ratingSnapshot,
-			historicalRatings,
-			analystPriceTarget,
-			analystPriceTargetConsensus,
-			stockGradesConsensus,
-			stockGradeChanges,
-			stockGradeHistory
-		] = await Promise.all([
-			fmpApi.Analyst.financialEstimates(symbol, { page: 0, limit: 9 }),
+		// Fetch with minimal limits
+		const [financialEstimates, ratingSnapshot, analystPriceTargetConsensus] = await Promise.all([
+			fmpApi.Analyst.financialEstimates(symbol, { page: 0, limit: 3 }),
 			fmpApi.Analyst.ratingSnapshot(symbol),
-			fmpApi.Analyst.historicalRatings(symbol, 9),
-			fmpApi.Analyst.analystPriceTarget(symbol),
-			fmpApi.Analyst.analystPriceTargetConsensus(symbol),
-			fmpApi.Analyst.stockGradesConsensus(symbol),
-			fmpApi.Analyst.stockGradeChanges(symbol),
-			fmpApi.Analyst.stockGradeHistory(symbol, 9)
+			fmpApi.Analyst.analystPriceTargetConsensus(symbol)
 		]);
 
+		// Apply data reduction to minimize tokens
 		return {
-			financialEstimates,
-			ratingSnapshot,
-			historicalRatings,
-			analystPriceTarget,
-			analystPriceTargetConsensus,
-			stockGradesConsensus,
-			stockGradeChanges,
-			stockGradeHistory
+			estimates: reduceAnalystEstimates(financialEstimates),
+			ratings: reduceAnalystRatings(ratingSnapshot ? [ratingSnapshot] : []),
+			priceTarget: reducePriceTargets(analystPriceTargetConsensus)
 		};
 	}
 });
@@ -100,20 +95,22 @@ export const companyDataTool = createTool({
 	}),
 	outputSchema: z.object({
 		profile: z.any(),
-		marketCap: z.any(),
 		quote: z.any()
 	}),
 	execute: async ({ context }) => {
 		const fmpApi = getFmpApi();
 		const symbol = context.symbol;
 
-		const [profile, marketCap, quote] = await Promise.all([
+		const [profile, quote] = await Promise.all([
 			fmpApi.Company.profile(symbol),
-			fmpApi.Company.marketCap(symbol),
 			fmpApi.Technical.quote(symbol)
 		]);
 
-		return { profile, marketCap, quote };
+		// Apply data reduction to minimize tokens
+		return {
+			profile: reduceCompanyProfile(profile),
+			quote: reduceQuote(quote)
+		};
 	}
 });
 
@@ -127,58 +124,73 @@ export const companyDataTool = createTool({
 
 export const incomeStatementTool = createTool({
 	id: 'fetch-income-statement',
-	description: 'Fetch income statement data for a stock symbol',
+	description:
+		'Fetch income statement data for a stock symbol (limited to 2 most recent periods to reduce token usage)',
 	inputSchema: z.object({
 		symbol: z.string().describe('Stock ticker symbol'),
 		period: z.enum(['annual', 'quarter']).default('annual').describe('Reporting period'),
-		limit: z.number().default(4).describe('Number of periods to fetch')
+		limit: z
+			.number()
+			.default(2)
+			.describe('Number of periods to fetch (default 2 to reduce token usage)')
 	}),
 	outputSchema: z.object({
 		incomeStatement: z.any()
 	}),
 	execute: async ({ context }) => {
 		const fmpApi = getFmpApi();
-		const { symbol, period, limit } = context;
-		const incomeStatement = await fmpApi.Statements.incomeStatement(symbol, { period, limit });
-		return { incomeStatement };
+		const { symbol, period } = context;
+		// Always fetch only 2 periods and reduce data
+		const incomeStatement = await fmpApi.Statements.incomeStatement(symbol, { period, limit: 2 });
+		return { incomeStatement: reduceIncomeStatement(incomeStatement) };
 	}
 });
 
 export const balanceSheetTool = createTool({
 	id: 'fetch-balance-sheet',
-	description: 'Fetch balance sheet data for a stock symbol',
+	description:
+		'Fetch balance sheet data for a stock symbol (limited to 2 most recent periods to reduce token usage)',
 	inputSchema: z.object({
 		symbol: z.string().describe('Stock ticker symbol'),
 		period: z.enum(['annual', 'quarter']).default('annual').describe('Reporting period'),
-		limit: z.number().default(4).describe('Number of periods to fetch')
+		limit: z
+			.number()
+			.default(2)
+			.describe('Number of periods to fetch (default 2 to reduce token usage)')
 	}),
 	outputSchema: z.object({
 		balanceSheet: z.any()
 	}),
 	execute: async ({ context }) => {
 		const fmpApi = getFmpApi();
-		const { symbol, period, limit } = context;
-		const balanceSheet = await fmpApi.Statements.balanceSheet(symbol, { period, limit });
-		return { balanceSheet };
+		const { symbol, period } = context;
+		// Always fetch only 2 periods and reduce data
+		const balanceSheet = await fmpApi.Statements.balanceSheet(symbol, { period, limit: 2 });
+		return { balanceSheet: reduceBalanceSheet(balanceSheet) };
 	}
 });
 
 export const cashFlowTool = createTool({
 	id: 'fetch-cash-flow',
-	description: 'Fetch cash flow statement data for a stock symbol',
+	description:
+		'Fetch cash flow statement data for a stock symbol (limited to 2 most recent periods to reduce token usage)',
 	inputSchema: z.object({
 		symbol: z.string().describe('Stock ticker symbol'),
 		period: z.enum(['annual', 'quarter']).default('annual').describe('Reporting period'),
-		limit: z.number().default(4).describe('Number of periods to fetch')
+		limit: z
+			.number()
+			.default(2)
+			.describe('Number of periods to fetch (default 2 to reduce token usage)')
 	}),
 	outputSchema: z.object({
 		cashFlow: z.any()
 	}),
 	execute: async ({ context }) => {
 		const fmpApi = getFmpApi();
-		const { symbol, period, limit } = context;
-		const cashFlow = await fmpApi.Statements.cashFlowStatement(symbol, { period, limit });
-		return { cashFlow };
+		const { symbol, period } = context;
+		// Always fetch only 2 periods and reduce data
+		const cashFlow = await fmpApi.Statements.cashFlowStatement(symbol, { period, limit: 2 });
+		return { cashFlow: reduceCashFlow(cashFlow) };
 	}
 });
 
@@ -195,25 +207,30 @@ export const financialRatiosTool = createTool({
 		const fmpApi = getFmpApi();
 		const { symbol } = context;
 		const ratios = await fmpApi.Statements.financialRatios(symbol);
-		return { ratios };
+		return { ratios: reduceFinancialRatios(ratios) };
 	}
 });
 
 export const keyMetricsTool = createTool({
 	id: 'fetch-key-metrics',
-	description: 'Fetch key metrics for a stock symbol',
+	description:
+		'Fetch key metrics for a stock symbol (limited to 2 most recent periods to reduce token usage)',
 	inputSchema: z.object({
 		symbol: z.string().describe('Stock ticker symbol'),
-		limit: z.number().default(4).describe('Number of periods to fetch')
+		limit: z
+			.number()
+			.default(2)
+			.describe('Number of periods to fetch (default 2 to reduce token usage)')
 	}),
 	outputSchema: z.object({
 		keyMetrics: z.any()
 	}),
 	execute: async ({ context }) => {
 		const fmpApi = getFmpApi();
-		const { symbol, limit } = context;
-		const keyMetrics = await fmpApi.Statements.keyMetrics(symbol, { period: 'annual', limit });
-		return { keyMetrics };
+		const { symbol } = context;
+		// Always fetch only 2 periods and reduce data
+		const keyMetrics = await fmpApi.Statements.keyMetrics(symbol, { period: 'annual', limit: 2 });
+		return { keyMetrics: reduceKeyMetrics(keyMetrics) };
 	}
 });
 
@@ -230,68 +247,67 @@ export const otherStatementTool = createTool({
 		const fmpApi = getFmpApi();
 		const { symbol } = context;
 		const financialScores = await fmpApi.Statements.financialScores(symbol);
-		return { financialScores };
+		return { financialScores: reduceFinancialScores(financialScores) };
 	}
 });
 
 export const incomeStatementGrowthTool = createTool({
 	id: 'fetch-income-statement-growth',
-	description: 'Fetch income statement growth metrics for a stock symbol',
+	description:
+		'Fetch income statement growth metrics for a stock symbol (limited to 2 most recent periods to reduce token usage)',
 	inputSchema: z.object({
 		symbol: z.string().describe('Stock ticker symbol'),
 		period: z.enum(['annual', 'quarter']).default('annual').describe('Reporting period'),
-		limit: z.number().default(4).describe('Number of periods to fetch')
+		limit: z
+			.number()
+			.default(2)
+			.describe('Number of periods to fetch (default 2 to reduce token usage)')
 	}),
 	outputSchema: z.object({
 		incomeStatementGrowth: z.any()
 	}),
 	execute: async ({ context }) => {
 		const fmpApi = getFmpApi();
-		const { symbol, period, limit } = context;
-		const incomeStatementGrowth = await fmpApi.Statements.incomeStatementGrowth(
-			symbol,
-			limit,
-			period
-		);
-		return { incomeStatementGrowth };
+		const { symbol, period } = context;
+		// Always fetch only 2 periods and reduce data
+		const incomeStatementGrowth = await fmpApi.Statements.incomeStatementGrowth(symbol, 2, period);
+		return { incomeStatementGrowth: reduceGrowthData(incomeStatementGrowth) };
 	}
 });
 
 export const balanceSheetGrowthTool = createTool({
 	id: 'fetch-balance-sheet-growth',
-	description: 'Fetch balance sheet growth metrics for a stock symbol',
+	description: 'Fetch balance sheet growth metrics for a stock symbol (reduced data)',
 	inputSchema: z.object({
 		symbol: z.string().describe('Stock ticker symbol'),
-		period: z.enum(['annual', 'quarter']).default('annual').describe('Reporting period'),
-		limit: z.number().default(4).describe('Number of periods to fetch')
+		period: z.enum(['annual', 'quarter']).default('annual').describe('Reporting period')
 	}),
 	outputSchema: z.object({
 		balanceSheetGrowth: z.any()
 	}),
 	execute: async ({ context }) => {
 		const fmpApi = getFmpApi();
-		const { symbol, period, limit } = context;
-		const balanceSheetGrowth = await fmpApi.Statements.balanceSheetGrowth(symbol, limit, period);
-		return { balanceSheetGrowth };
+		const { symbol, period } = context;
+		const balanceSheetGrowth = await fmpApi.Statements.balanceSheetGrowth(symbol, 2, period);
+		return { balanceSheetGrowth: reduceGrowthData(balanceSheetGrowth) };
 	}
 });
 
 export const cashFlowGrowthTool = createTool({
 	id: 'fetch-cash-flow-growth',
-	description: 'Fetch cash flow statement growth metrics for a stock symbol',
+	description: 'Fetch cash flow statement growth metrics for a stock symbol (reduced data)',
 	inputSchema: z.object({
 		symbol: z.string().describe('Stock ticker symbol'),
-		period: z.enum(['annual', 'quarter']).default('annual').describe('Reporting period'),
-		limit: z.number().default(4).describe('Number of periods to fetch')
+		period: z.enum(['annual', 'quarter']).default('annual').describe('Reporting period')
 	}),
 	outputSchema: z.object({
 		cashFlowGrowth: z.any()
 	}),
 	execute: async ({ context }) => {
 		const fmpApi = getFmpApi();
-		const { symbol, period, limit } = context;
-		const cashFlowGrowth = await fmpApi.Statements.cashFlowStatementGrowth(symbol, limit, period);
-		return { cashFlowGrowth };
+		const { symbol, period } = context;
+		const cashFlowGrowth = await fmpApi.Statements.cashFlowStatementGrowth(symbol, 2, period);
+		return { cashFlowGrowth: reduceGrowthData(cashFlowGrowth) };
 	}
 });
 
@@ -301,27 +317,22 @@ export const cashFlowGrowthTool = createTool({
 
 export const newsDataTool = createTool({
 	id: 'fetch-news-data',
-	description: 'Fetch recent news articles, price target news, and stock grade news for a stock',
+	description: 'Fetch recent news headlines for a stock (reduced data)',
 	inputSchema: z.object({
-		symbol: z.string().describe('Stock ticker symbol'),
-		limit: z.number().default(20).describe('Number of articles to fetch')
+		symbol: z.string().describe('Stock ticker symbol')
 	}),
 	outputSchema: z.object({
-		stockNews: z.any(),
-		priceTargetNews: z.any(),
-		stockGradeNews: z.any()
+		news: z.any()
 	}),
 	execute: async ({ context }) => {
 		const fmpApi = getFmpApi();
-		const { symbol, limit } = context;
+		const { symbol } = context;
 
-		const [stockNews, priceTargetNews, stockGradeNews] = await Promise.all([
-			fmpApi.News.stockNews(symbol, { limit }),
-			fmpApi.News.priceTargetNews(symbol, limit),
-			fmpApi.News.stockGradeNews(symbol, { page: 0, limit })
-		]);
+		// Only fetch stock news with small limit
+		const stockNews = await fmpApi.News.stockNews(symbol, { limit: 5 });
 
-		return { stockNews, priceTargetNews, stockGradeNews };
+		// Apply data reduction
+		return { news: reduceNews(stockNews) };
 	}
 });
 
@@ -331,7 +342,7 @@ export const newsDataTool = createTool({
 
 export const insiderDataTool = createTool({
 	id: 'fetch-insider-data',
-	description: 'Fetch insider trading activity for a stock',
+	description: 'Fetch insider trading activity for a stock (reduced data)',
 	inputSchema: z.object({
 		symbol: z.string().describe('Stock ticker symbol')
 	}),
@@ -342,8 +353,8 @@ export const insiderDataTool = createTool({
 		const fmpApi = getFmpApi();
 		const symbol = context.symbol;
 
-		// Search insider trades for the last 180 days
-		const from = getDateDaysAgo(180);
+		// Search insider trades for the last 90 days only (reduced from 180)
+		const from = getDateDaysAgo(90);
 		const to = getToday();
 
 		const insiderTrades = await fmpApi.InsiderTrades.searchInsiderTrades(symbol, {
@@ -351,7 +362,8 @@ export const insiderDataTool = createTool({
 			to
 		});
 
-		return { insiderTrades };
+		// Apply data reduction
+		return { insiderTrades: reduceInsiderTrading(insiderTrades) };
 	}
 });
 
@@ -361,7 +373,7 @@ export const insiderDataTool = createTool({
 
 export const technicalDataTool = createTool({
 	id: 'fetch-technical-data',
-	description: 'Fetch technical indicators including moving averages, RSI, and ADX',
+	description: 'Fetch technical indicators including moving averages, RSI, and ADX (reduced data)',
 	inputSchema: z.object({
 		symbol: z.string().describe('Stock ticker symbol')
 	}),
@@ -377,7 +389,8 @@ export const technicalDataTool = createTool({
 		const fmpApi = getFmpApi();
 		const symbol = context.symbol;
 
-		const from = getDateDaysAgo(365);
+		// Only get last 30 days for technical indicators (reduced from 365)
+		const from = getDateDaysAgo(30);
 		const to = getToday();
 		const timeframe = '1day';
 
@@ -390,7 +403,15 @@ export const technicalDataTool = createTool({
 			fmpApi.Technical.averageDirectionalIndex(symbol, { periodLength: 14, timeframe, from, to })
 		]);
 
-		return { quote, sma50, sma200, ema20, rsi14, adx14 };
+		// Apply data reduction - only keep most recent values
+		return {
+			quote: reduceQuote(quote),
+			sma50: reduceTechnicalIndicators(sma50),
+			sma200: reduceTechnicalIndicators(sma200),
+			ema20: reduceTechnicalIndicators(ema20),
+			rsi14: reduceTechnicalIndicators(rsi14),
+			adx14: reduceTechnicalIndicators(adx14)
+		};
 	}
 });
 
@@ -427,21 +448,11 @@ export const chartDataTool = createTool({
 
 export const economicDataTool = createTool({
 	id: 'fetch-economic-data',
-	description: 'Fetch broad economic indicators including treasury rates and economic indicators',
+	description: 'Fetch key economic indicators (reduced data)',
 	inputSchema: z.object({
 		indicators: z
-			.array(
-				z.enum([
-					'GDP',
-					'realGDP',
-					'CPI',
-					'inflationRate',
-					'unemploymentRate',
-					'federalFunds',
-					'consumerSentiment'
-				])
-			)
-			.default(['GDP', 'CPI', 'unemploymentRate', 'federalFunds'])
+			.array(z.enum(['GDP', 'CPI', 'unemploymentRate', 'federalFunds']))
+			.default(['GDP', 'CPI', 'unemploymentRate'])
 			.describe('Economic indicators to fetch')
 	}),
 	outputSchema: z.object({
@@ -452,25 +463,31 @@ export const economicDataTool = createTool({
 		const fmpApi = getFmpApi();
 		const { indicators } = context;
 
-		const from = getDateDaysAgo(365);
+		// Only get last 30 days (reduced from 365)
+		const from = getDateDaysAgo(30);
 		const to = getToday();
 
 		// Fetch treasury rates
 		const treasuryRates = await fmpApi.Economics.treasuryRates({ from, to });
 
-		// Fetch each economic indicator
+		// Fetch each economic indicator (limit to most recent data point)
 		const economicIndicatorResults = await Promise.all(
 			indicators.map(async (indicator) => {
 				const data = await fmpApi.Economics.economicIndicators(indicator, { from, to });
-				return { indicator, data };
+				// Only keep most recent value
+				return { indicator, value: Array.isArray(data) && data[0] ? data[0] : data };
 			})
 		);
 
 		const economicIndicators = Object.fromEntries(
-			economicIndicatorResults.map(({ indicator, data }) => [indicator, data])
+			economicIndicatorResults.map(({ indicator, value }) => [indicator, value])
 		);
 
-		return { treasuryRates, economicIndicators };
+		// Only return most recent treasury rate
+		return {
+			treasuryRates: Array.isArray(treasuryRates) ? treasuryRates.slice(0, 1) : treasuryRates,
+			economicIndicators
+		};
 	}
 });
 
@@ -480,8 +497,8 @@ export const economicDataTool = createTool({
 
 export const marketPerformanceTool = createTool({
 	id: 'fetch-market-performance',
-	description: 'Fetch market performance data including gainers, losers, and most active stocks',
-	inputSchema: z.object({}),
+	description: 'Fetch market performance summary (reduced data). Takes no parameters.',
+	inputSchema: z.object({}).passthrough(),
 	outputSchema: z.object({
 		biggestGainers: z.any(),
 		biggestLosers: z.any(),
@@ -496,7 +513,22 @@ export const marketPerformanceTool = createTool({
 			fmpApi.MarketPerformance.mostActive()
 		]);
 
-		return { biggestGainers, biggestLosers, mostActive };
+		// Only keep top 3 of each and reduce fields
+		const reduceMarketData = (data: unknown[]) =>
+			(data || []).slice(0, 3).map((item) => {
+				const i = item as Record<string, unknown>;
+				return {
+					symbol: i.symbol,
+					price: i.price,
+					change: i.changesPercentage
+				};
+			});
+
+		return {
+			biggestGainers: reduceMarketData(biggestGainers),
+			biggestLosers: reduceMarketData(biggestLosers),
+			mostActive: reduceMarketData(mostActive)
+		};
 	}
 });
 

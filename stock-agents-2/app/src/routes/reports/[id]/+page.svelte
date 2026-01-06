@@ -3,7 +3,9 @@
 
 	let { params } = $props();
 
-	const reportQuery = $derived(getReport({ id: params.id }));
+	// Only call getReport if id is available and valid (UUID format)
+	const hasValidId = $derived(params.id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.id));
+	const reportQuery = $derived(hasValidId ? getReport({ id: params.id }) : null);
 </script>
 
 <svelte:head>
@@ -15,7 +17,12 @@
 		← Back to Reports
 	</a>
 
-	{#if reportQuery.loading}
+	{#if !hasValidId}
+		<div class="rounded-lg border border-red-500/50 bg-red-900/20 p-4 text-red-400">
+			<p class="font-semibold">Invalid report ID</p>
+			<p>The report ID format is invalid.</p>
+		</div>
+	{:else if reportQuery?.loading}
 		<div class="rounded-lg border border-gray-700 bg-gray-800/50 p-8 text-center">
 			<div class="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
 			<p class="text-gray-400">Loading report...</p>

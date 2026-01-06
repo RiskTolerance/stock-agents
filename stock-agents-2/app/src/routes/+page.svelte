@@ -53,6 +53,19 @@
 				View positions, orders, and account balance
 			</p>
 		</a>
+
+		<a
+			href="/monitoring"
+			class="group rounded-xl border border-gray-700 bg-gray-800/50 p-6 transition-all hover:border-yellow-500/50 hover:bg-gray-800"
+		>
+			<div class="mb-4 text-3xl">🔍</div>
+			<h2 class="mb-2 text-xl font-semibold text-gray-100 group-hover:text-yellow-400">
+				Monitoring
+			</h2>
+			<p class="text-sm text-gray-400">
+				Track agent sessions, decisions, and actions
+			</p>
+		</a>
 	</div>
 
 	<div class="mt-12 rounded-xl border border-gray-700 bg-gray-800/30 p-6">

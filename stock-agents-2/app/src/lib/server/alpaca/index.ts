@@ -38,9 +38,10 @@ export interface OrderParams {
 	symbol: string;
 	qty: number;
 	side: 'buy' | 'sell';
-	type: 'market' | 'limit';
-	time_in_force: 'day' | 'gtc' | 'ioc';
+	type: 'market' | 'limit' | 'stop' | 'stop_limit';
+	time_in_force: 'day' | 'gtc' | 'ioc' | 'fok';
 	limit_price?: number;
+	stop_price?: number;
 }
 
 export async function submitOrder(params: OrderParams) {

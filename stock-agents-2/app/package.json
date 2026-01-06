@@ -30,6 +30,7 @@
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.1.17",
 		"@types/node": "^22",
+		"@types/node-cron": "^3.0.11",
 		"@vitest/browser-playwright": "^4.0.15",
 		"dotenv": "^17.2.3",
 		"drizzle-kit": "^0.31.8",
@@ -58,6 +59,8 @@
 		"@alpacahq/alpaca-trade-api": "^3.1.3",
 		"@mastra/core": "^0.24.9",
 		"@mastra/pg": "^0.17.10",
+		"marked": "^17.0.1",
+		"node-cron": "^4.2.1",
 		"postgres": "^3.4.7",
 		"zod": "^4.3.5"
 	}

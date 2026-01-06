@@ -24,6 +24,9 @@ import { bearishRebuttalAgent } from './agents/bearish-rebuttal.js';
 // Import Layer 4 decision agent
 import { decisionAgent } from './agents/decision.js';
 
+// Import account manager agent
+import { accountManagerAgent } from './agents/account-manager.js';
+
 // Import company statement agents
 import { incomeStatementAgent } from './agents/company-statements/income-statement.js';
 import { balanceSheetAgent } from './agents/company-statements/balance-sheet.js';
@@ -37,7 +40,8 @@ import { cashFlowGrowthAgent } from './agents/company-statements/cash-flow-growt
 
 // Import workflows
 import { analyzeStockWorkflow } from './workflows/analyze-stock';
-// import { executeTradeWorkflow } from './workflows/execute-trade';
+import { executeTradeWorkflow } from './workflows/execute-trade';
+// Note: autonomous-trading workflow removed - agent is now truly autonomous and invoked directly
 
 if (!env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
 
@@ -73,10 +77,14 @@ export const mastra = new Mastra({
 		bullishRebuttalAgent,
 		bearishRebuttalAgent,
 		// Layer 4: Decision Agent
-		decisionAgent
+		decisionAgent,
+		// Account Manager Agent (autonomous trading)
+		accountManagerAgent
 	},
 	workflows: { 
-		'analyze-stock': analyzeStockWorkflow
+		'analyze-stock': analyzeStockWorkflow,
+		'execute-trade': executeTradeWorkflow
+		// Note: autonomous-trading workflow removed - agent is invoked directly by heartbeat
 	},
 	storage: new PostgresStore({
 		connectionString: env.DATABASE_URL
