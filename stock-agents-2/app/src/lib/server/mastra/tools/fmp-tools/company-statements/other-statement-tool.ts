@@ -13,8 +13,10 @@ export const otherStatementTool = createTool({
 		financialScores: z.any()
 	}),
 	execute: async ({ context }) => {
-		const fmpApi = getFmpApi();
 		const { symbol } = context;
+		console.log(`[Other Statement Tool] Executing for symbol: ${symbol}`);
+		
+		const fmpApi = getFmpApi();
 		const financialScores = await fmpApi.Statements.financialScores(symbol);
 		return { financialScores: reduceFinancialScores(financialScores) };
 	}

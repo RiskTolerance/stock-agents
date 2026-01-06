@@ -1,7 +1,7 @@
 import { createTool } from '@mastra/core/tools';
 import { z } from 'zod';
 import { getFmpApi } from '../utils.js';
-import { reduceGrowthData } from '../../../utils/data-reduction.js';
+import { reduceBalanceSheetGrowth } from '../../../utils/data-reduction.js';
 
 export const balanceSheetGrowthTool = createTool({
 	id: 'fetch-balance-sheet-growth',
@@ -14,10 +14,12 @@ export const balanceSheetGrowthTool = createTool({
 		balanceSheetGrowth: z.any()
 	}),
 	execute: async ({ context }) => {
-		const fmpApi = getFmpApi();
 		const { symbol, period } = context;
+		console.log(`[Balance Sheet Growth Tool] Executing for symbol: ${symbol}, period: ${period}`);
+		
+		const fmpApi = getFmpApi();
 		const balanceSheetGrowth = await fmpApi.Statements.balanceSheetGrowth(symbol, 2, period);
-		return { balanceSheetGrowth: reduceGrowthData(balanceSheetGrowth) };
+		return { balanceSheetGrowth: reduceBalanceSheetGrowth(balanceSheetGrowth) };
 	}
 });
 

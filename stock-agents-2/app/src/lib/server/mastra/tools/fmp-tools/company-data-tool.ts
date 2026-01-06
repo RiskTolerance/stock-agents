@@ -14,8 +14,10 @@ export const companyDataTool = createTool({
 		quote: z.any()
 	}),
 	execute: async ({ context }) => {
-		const fmpApi = getFmpApi();
 		const symbol = context.symbol;
+		console.log(`[Company Data Tool] Executing for symbol: ${symbol}`);
+		
+		const fmpApi = getFmpApi();
 
 		const [profile, quote] = await Promise.all([
 			fmpApi.Company.profile(symbol),

@@ -16,8 +16,10 @@ export const economicDataTool = createTool({
 		economicIndicators: z.any()
 	}),
 	execute: async ({ context }) => {
-		const fmpApi = getFmpApi();
 		const { indicators } = context;
+		console.log(`[Economic Data Tool] Executing for indicators: ${indicators.join(', ')}`);
+		
+		const fmpApi = getFmpApi();
 
 		// Only get last 30 days (reduced from 365)
 		const from = getDateDaysAgo(30);

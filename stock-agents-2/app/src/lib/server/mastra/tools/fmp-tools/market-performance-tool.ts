@@ -12,6 +12,8 @@ export const marketPerformanceTool = createTool({
 		mostActive: z.any()
 	}),
 	execute: async () => {
+		console.log(`[Market Performance Tool] Executing`);
+		
 		const fmpApi = getFmpApi();
 
 		const [biggestGainers, biggestLosers, mostActive] = await Promise.all([

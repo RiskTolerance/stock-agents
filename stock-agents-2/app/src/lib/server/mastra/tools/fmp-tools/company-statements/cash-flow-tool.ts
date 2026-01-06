@@ -19,8 +19,10 @@ export const cashFlowTool = createTool({
 		cashFlow: z.any()
 	}),
 	execute: async ({ context }) => {
-		const fmpApi = getFmpApi();
 		const { symbol, period } = context;
+		console.log(`[Cash Flow Tool] Executing for symbol: ${symbol}, period: ${period}`);
+		
+		const fmpApi = getFmpApi();
 		// Always fetch only 2 periods and reduce data
 		const cashFlow = await fmpApi.Statements.cashFlowStatement(symbol, { period, limit: 2 });
 		return { cashFlow: reduceCashFlow(cashFlow) };

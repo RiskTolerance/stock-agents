@@ -19,8 +19,10 @@ export const balanceSheetTool = createTool({
 		balanceSheet: z.any()
 	}),
 	execute: async ({ context }) => {
-		const fmpApi = getFmpApi();
 		const { symbol, period } = context;
+		console.log(`[Balance Sheet Tool] Executing for symbol: ${symbol}, period: ${period}`);
+		
+		const fmpApi = getFmpApi();
 		// Always fetch only 2 periods and reduce data
 		const balanceSheet = await fmpApi.Statements.balanceSheet(symbol, { period, limit: 2 });
 		return { balanceSheet: reduceBalanceSheet(balanceSheet) };

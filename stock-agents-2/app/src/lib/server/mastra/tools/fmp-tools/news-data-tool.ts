@@ -13,8 +13,10 @@ export const newsDataTool = createTool({
 		news: z.any()
 	}),
 	execute: async ({ context }) => {
-		const fmpApi = getFmpApi();
 		const { symbol } = context;
+		console.log(`[News Data Tool] Executing for symbol: ${symbol}`);
+		
+		const fmpApi = getFmpApi();
 
 		// Only fetch stock news with small limit
 		const stockNews = await fmpApi.News.stockNews(symbol, { limit: 5 });

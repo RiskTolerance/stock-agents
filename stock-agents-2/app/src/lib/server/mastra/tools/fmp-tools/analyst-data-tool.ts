@@ -19,8 +19,10 @@ export const analystDataTool = createTool({
 		priceTarget: z.any()
 	}),
 	execute: async ({ context }) => {
-		const fmpApi = getFmpApi();
 		const symbol = context.symbol;
+		console.log(`[Analyst Data Tool] Executing for symbol: ${symbol}`);
+		
+		const fmpApi = getFmpApi();
 
 		// Fetch with minimal limits
 		const [financialEstimates, ratingSnapshot, analystPriceTargetConsensus] = await Promise.all([

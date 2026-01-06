@@ -13,8 +13,10 @@ export const insiderDataTool = createTool({
 		insiderTrades: z.any()
 	}),
 	execute: async ({ context }) => {
-		const fmpApi = getFmpApi();
 		const symbol = context.symbol;
+		console.log(`[Insider Data Tool] Executing for symbol: ${symbol}`);
+		
+		const fmpApi = getFmpApi();
 
 		// Search insider trades for the last 90 days only (reduced from 180)
 		const from = getDateDaysAgo(90);

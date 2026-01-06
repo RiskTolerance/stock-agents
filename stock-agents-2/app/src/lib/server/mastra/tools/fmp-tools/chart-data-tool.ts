@@ -13,8 +13,10 @@ export const chartDataTool = createTool({
 		priceHistory: z.any()
 	}),
 	execute: async ({ context }) => {
-		const fmpApi = getFmpApi();
 		const { symbol, days } = context;
+		console.log(`[Chart Data Tool] Executing for symbol: ${symbol}, days: ${days}`);
+		
+		const fmpApi = getFmpApi();
 
 		const from = getDateDaysAgo(days);
 		const to = getToday();

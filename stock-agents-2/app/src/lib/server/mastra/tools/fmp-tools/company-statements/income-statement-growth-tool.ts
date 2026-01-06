@@ -19,8 +19,10 @@ export const incomeStatementGrowthTool = createTool({
 		incomeStatementGrowth: z.any()
 	}),
 	execute: async ({ context }) => {
-		const fmpApi = getFmpApi();
 		const { symbol, period } = context;
+		console.log(`[Income Statement Growth Tool] Executing for symbol: ${symbol}, period: ${period}`);
+		
+		const fmpApi = getFmpApi();
 		// Always fetch only 2 periods and reduce data
 		const incomeStatementGrowth = await fmpApi.Statements.incomeStatementGrowth(symbol, 2, period);
 		return { incomeStatementGrowth: reduceGrowthData(incomeStatementGrowth) };

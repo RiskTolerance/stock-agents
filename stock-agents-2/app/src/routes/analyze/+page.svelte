@@ -7,6 +7,11 @@
 	let result = $state<Awaited<ReturnType<typeof analyzeStock>> | null>(null);
 	let error = $state<string | null>(null);
 
+	// Computed values for result data
+	const layer1Data = $derived(result ? getLayer1Data(result.context) : {});
+	const layer2Reasoning = $derived(result?.context?.layer2Reasoning);
+	const layer3Rebuttals = $derived(result?.context?.layer3Rebuttals);
+
 	async function handleAnalyze() {
 		if (!symbol.trim()) return;
 
@@ -96,10 +101,6 @@
 			{/snippet}
 
 			<div class="grid grid-cols-4 gap-4 p-6 overflow-y-scroll h-full py-12">
-				{@const layer1Data = getLayer1Data(result.context)}
-				{@const layer2Reasoning = result.context?.layer2Reasoning}
-				{@const layer3Rebuttals = result.context?.layer3Rebuttals}
-
 				<!-- Layer 1: Data Collection (10 cards, 1 column each) -->
 				{#if layer1Data.analyst}
 					{@render resultCard('Analyst', typeof layer1Data.analyst === 'string' ? layer1Data.analyst : JSON.stringify(layer1Data.analyst), 1)}

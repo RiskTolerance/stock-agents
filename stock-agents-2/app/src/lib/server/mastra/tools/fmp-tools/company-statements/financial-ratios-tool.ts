@@ -13,8 +13,10 @@ export const financialRatiosTool = createTool({
 		ratios: z.any()
 	}),
 	execute: async ({ context }) => {
-		const fmpApi = getFmpApi();
 		const { symbol } = context;
+		console.log(`[Financial Ratios Tool] Executing for symbol: ${symbol}`);
+		
+		const fmpApi = getFmpApi();
 		const ratios = await fmpApi.Statements.financialRatios(symbol);
 		return { ratios: reduceFinancialRatios(ratios) };
 	}

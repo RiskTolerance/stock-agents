@@ -1,5 +1,6 @@
 <script lang="ts">
 	import './layout.css';
+	import Navigation from '$lib/components/ui/Navigation.svelte';
 
 	let { children } = $props();
 </script>
@@ -14,20 +15,7 @@
 			<a href="/" class="text-xl font-bold text-white hover:text-teal-400 transition-colors">
 				Stock Agents
 			</a>
-			<div class="flex gap-6">
-				<a href="/analyze" class="text-gray-400 transition-colors hover:text-teal-300">
-					Analyze
-				</a>
-				<a href="/reports" class="text-gray-400 transition-colors hover:text-teal-300">
-					Reports
-				</a>
-				<a href="/portfolio" class="text-gray-400 transition-colors hover:text-teal-300">
-					Portfolio
-				</a>
-				<a href="/monitoring" class="text-gray-400 transition-colors hover:text-teal-300">
-					Monitoring
-				</a>
-			</div>
+			<Navigation />
 		</div>
 	</nav>
 

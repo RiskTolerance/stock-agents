@@ -14,8 +14,10 @@ export const discountedCashFlowTool = createTool({
 		leveredDcf: z.any()
 	}),
 	execute: async ({ context }) => {
-		const fmpApi = getFmpApi();
 		const symbol = context.symbol.toUpperCase();
+		console.log(`[Discounted Cash Flow Tool] Executing for symbol: ${symbol}`);
+		
+		const fmpApi = getFmpApi();
 
 		// Fetch DCF data in parallel
 		const [dcfValuation, leveredDcf] = await Promise.all([

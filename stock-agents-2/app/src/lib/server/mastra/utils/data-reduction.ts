@@ -84,26 +84,63 @@ export function reduceFinancialRatios(data: any[]): any[] {
 }
 
 /**
- * Extract only essential fields from key metrics
+ * Extract only essential fields from key metrics (annual)
  */
 export function reduceKeyMetrics(data: any[]): any[] {
 	if (!Array.isArray(data)) return data;
 	return data.slice(0, 2).map((item) => ({
 		date: item.date,
 		period: item.period,
+		// Valuation metrics
 		marketCap: item.marketCap,
 		enterpriseValue: item.enterpriseValue,
-		peRatio: item.peRatio,
-		evToEBITDA: item.enterpriseValueOverEBITDA,
-		evToRevenue: item.evToSales,
+		evToEBITDA: item.enterpriseValueOverEBITDA || item.evToEBITDA,
+		evToRevenue: item.evToSales || item.evToRevenue,
+		// Profitability metrics
+		returnOnAssets: item.returnOnAssets || item.roa,
+		returnOnEquity: item.returnOnEquity || item.roe,
+		returnOnInvestedCapital: item.returnOnInvestedCapital || item.roic,
+		returnOnCapitalEmployed: item.returnOnCapitalEmployed || item.roce,
+		// Per-share metrics
 		revenuePerShare: item.revenuePerShare,
 		bookValuePerShare: item.bookValuePerShare,
-		dividendYield: item.dividendYield
+		// Other metrics
+		dividendYield: item.dividendYield,
+		currentRatio: item.currentRatio,
+		earningsYield: item.earningsYield
 	}));
 }
 
 /**
- * Extract only essential fields from growth data
+ * Extract only essential fields from key metrics TTM (Trailing Twelve Months)
+ */
+export function reduceKeyMetricsTtm(data: any[]): any {
+	if (!Array.isArray(data) || data.length === 0) return data;
+	const item = data[0]; // TTM is typically a single object
+	return {
+		// Valuation metrics
+		marketCap: item.marketCap,
+		enterpriseValue: item.enterpriseValueTTM,
+		evToEBITDA: item.evToEBITDATTM,
+		evToRevenue: item.evToSalesTTM,
+		// Profitability metrics
+		returnOnAssets: item.returnOnAssetsTTM,
+		returnOnEquity: item.returnOnEquityTTM,
+		returnOnInvestedCapital: item.returnOnInvestedCapitalTTM,
+		returnOnCapitalEmployed: item.returnOnCapitalEmployedTTM,
+		// Per-share metrics
+		revenuePerShare: item.revenuePerShareTTM,
+		bookValuePerShare: item.bookValuePerShareTTM,
+		netIncomePerShare: item.netIncomePerShareTTM, // EPS equivalent
+		// Other metrics
+		dividendYield: item.dividendYieldTTM,
+		currentRatio: item.currentRatioTTM,
+		earningsYield: item.earningsYieldTTM
+	};
+}
+
+/**
+ * Extract only essential fields from income statement growth data
  */
 export function reduceGrowthData(data: any[]): any[] {
 	if (!Array.isArray(data)) return data;
@@ -114,6 +151,56 @@ export function reduceGrowthData(data: any[]): any[] {
 		netIncomeGrowth: item.netIncomeGrowth || item.growthNetIncome,
 		epsGrowth: item.epsgrowth || item.growthEPS,
 		operatingIncomeGrowth: item.operatingIncomeGrowth || item.growthOperatingIncome
+	}));
+}
+
+/**
+ * Extract only essential fields from balance sheet growth data
+ */
+export function reduceBalanceSheetGrowth(data: any[]): any[] {
+	if (!Array.isArray(data)) return data;
+	return data.slice(0, 2).map((item) => ({
+		date: item.date,
+		period: item.period,
+		// Asset growth
+		growthTotalAssets: item.growthTotalAssets,
+		growthTotalCurrentAssets: item.growthTotalCurrentAssets,
+		growthTotalNonCurrentAssets: item.growthTotalNonCurrentAssets,
+		growthCashAndCashEquivalents: item.growthCashAndCashEquivalents,
+		growthInventory: item.growthInventory,
+		growthNetReceivables: item.growthNetReceivables,
+		growthPropertyPlantEquipmentNet: item.growthPropertyPlantEquipmentNet,
+		// Liability growth
+		growthTotalLiabilities: item.growthTotalLiabilities,
+		growthTotalCurrentLiabilities: item.growthTotalCurrentLiabilities,
+		growthTotalNonCurrentLiabilities: item.growthTotalNonCurrentLiabilities,
+		growthLongTermDebt: item.growthLongTermDebt,
+		growthShortTermDebt: item.growthShortTermDebt,
+		growthAccountPayables: item.growthAccountPayables,
+		// Equity growth
+		growthTotalStockholdersEquity: item.growthTotalStockholdersEquity,
+		growthTotalEquity: item.growthTotalEquity,
+		growthRetainedEarnings: item.growthRetainedEarnings,
+		growthCommonStock: item.growthCommonStock,
+		// Debt metrics
+		growthTotalDebt: item.growthTotalDebt,
+		growthNetDebt: item.growthNetDebt
+	}));
+}
+
+/**
+ * Extract only essential fields from cash flow growth data
+ */
+export function reduceCashFlowGrowth(data: any[]): any[] {
+	if (!Array.isArray(data)) return data;
+	return data.slice(0, 2).map((item) => ({
+		date: item.date,
+		period: item.period,
+		growthOperatingCashFlow: item.growthOperatingCashFlow || item.growthNetCashProvidedByOperatingActivites,
+		growthFreeCashFlow: item.growthFreeCashFlow,
+		growthCapitalExpenditure: item.growthCapitalExpenditure,
+		growthNetIncome: item.growthNetIncome,
+		growthNetChangeInCash: item.growthNetChangeInCash
 	}));
 }
 

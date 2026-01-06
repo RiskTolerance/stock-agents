@@ -1,7 +1,7 @@
 import { createTool } from '@mastra/core/tools';
 import { z } from 'zod';
 import { getFmpApi } from '../utils.js';
-import { reduceGrowthData } from '../../../utils/data-reduction.js';
+import { reduceCashFlowGrowth } from '../../../utils/data-reduction.js';
 
 export const cashFlowGrowthTool = createTool({
 	id: 'fetch-cash-flow-growth',
@@ -14,10 +14,12 @@ export const cashFlowGrowthTool = createTool({
 		cashFlowGrowth: z.any()
 	}),
 	execute: async ({ context }) => {
-		const fmpApi = getFmpApi();
 		const { symbol, period } = context;
+		console.log(`[Cash Flow Growth Tool] Executing for symbol: ${symbol}, period: ${period}`);
+		
+		const fmpApi = getFmpApi();
 		const cashFlowGrowth = await fmpApi.Statements.cashFlowStatementGrowth(symbol, 2, period);
-		return { cashFlowGrowth: reduceGrowthData(cashFlowGrowth) };
+		return { cashFlowGrowth: reduceCashFlowGrowth(cashFlowGrowth) };
 	}
 });
 
