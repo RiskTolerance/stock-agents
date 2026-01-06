@@ -39,8 +39,8 @@ import { balanceSheetGrowthAgent } from './agents/company-statements/balance-she
 import { cashFlowGrowthAgent } from './agents/company-statements/cash-flow-growth.js';
 
 // Import workflows
-import { analyzeStockWorkflow } from './workflows/analyze-stock';
-import { executeTradeWorkflow } from './workflows/execute-trade';
+import { analyzeStockWorkflow } from './workflows/analyze-stock.js';
+import { executeTradeWorkflow } from './workflows/execute-trade.js';
 // Note: autonomous-trading workflow removed - agent is now truly autonomous and invoked directly
 
 if (!env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
@@ -81,7 +81,7 @@ export const mastra = new Mastra({
 		// Account Manager Agent (autonomous trading)
 		accountManagerAgent
 	},
-	workflows: { 
+	workflows: {
 		'analyze-stock': analyzeStockWorkflow,
 		'execute-trade': executeTradeWorkflow
 		// Note: autonomous-trading workflow removed - agent is invoked directly by heartbeat
@@ -90,4 +90,3 @@ export const mastra = new Mastra({
 		connectionString: env.DATABASE_URL
 	})
 });
-

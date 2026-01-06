@@ -1,2 +1,0 @@
-# the fmp-api is a wrapper around the financial modeling prep API and is published to npm. It is basically a separate project, but since it is a dependency of each Docker container, I'm keeping it here, locally.
-fmp-api
