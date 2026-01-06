@@ -2,13 +2,17 @@
 	import { AreaChart, Axis, Spline, Svg, Tooltip, Highlight } from 'layerchart';
 	import dayjs from 'dayjs';
 	import { getChartData } from './data.remote';
-	import { analyzeStock } from './analyze/data.remote';
+	import { analyzeStock } from './analyze/data.remote.js';
 	import ReportDisplay from '$lib/components/ReportDisplay.svelte';
 
 	let { data } = $props();
 
-	let stockData = $state(data.priceChart || []);
-	let symbol = $state(data.defaultSymbol || 'GOOGL');
+	// Use derived for reactive prop values
+	const initialPriceChart = $derived(data.priceChart || []);
+	const initialSymbol = $derived(data.defaultSymbol || 'GOOGL');
+
+	let stockData = $state(initialPriceChart);
+	let symbol = $state(initialSymbol);
 	let chartType = $state<'line' | 'candlestick' | 'bar'>('line');
 	let dateRange = $state<'1d' | '7d' | '1m' | '3m' | '1y'>('3m');
 	let isLoading = $state(false);
@@ -20,8 +24,8 @@
 
 	// Initialize stockData from server data
 	$effect(() => {
-		if (data.priceChart && data.priceChart.length > 0) {
-			stockData = [...data.priceChart]; // Create a new array to ensure reactivity
+		if (initialPriceChart.length > 0) {
+			stockData = [...initialPriceChart]; // Create a new array to ensure reactivity
 		}
 	});
 
@@ -279,7 +283,7 @@
 					{:else}
 						<div class="flex flex-col items-center justify-center h-full text-gray-400 gap-2">
 							<div>No chart data available</div>
-							<div class="text-xs">Data: {JSON.stringify({ hasData: !!data.priceChart, dataLength: data.priceChart?.length || 0 })}</div>
+							<div class="text-xs">Data: {JSON.stringify({ hasData: initialPriceChart.length > 0, dataLength: initialPriceChart.length })}</div>
 						</div>
 					{/if}
 				</div>
